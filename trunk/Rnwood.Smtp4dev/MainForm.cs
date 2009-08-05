@@ -9,9 +9,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using Rnwood.SmtpServer;
-using smtp4dev.Properties;
+using Rnwood.Smtp4dev.MessageInspector;
 
-namespace smtp4dev
+namespace Rnwood.Smtp4dev
 {
     public partial class MainForm : Form
     {
@@ -19,7 +19,8 @@ namespace smtp4dev
         {
             InitializeComponent();
 
-            bindingSource.DataSource = _messages;
+            messageBindingSource.DataSource = _messages;
+            sessionBindingSource.DataSource = _sessions;
             _messages.ListChanged += _messages_ListChanged;
 
             Icon = Properties.Resources.Icon1;
@@ -77,8 +78,9 @@ namespace smtp4dev
             {
                 Application.DoEvents();
 
-                Behaviour b = new Behaviour();
+                Smtp4DevServerBehaviour b = new Smtp4DevServerBehaviour();
                 b.MessageReceived += MessageReceived;
+                b.SessionCompleted += new EventHandler<SessionCompletedEventArgs>(b_SessionCompleted);
 
                 _server = new Server(b);
                 _server.Run();
@@ -95,13 +97,21 @@ namespace smtp4dev
             }
         }
 
+        void b_SessionCompleted(object sender, SessionCompletedEventArgs e)
+        {
+            Invoke((MethodInvoker)(() =>
+                                            {
+                                                _sessions.Add(new SessionViewModel(e.Session));
+                                            }));
+        }
+
         private void MessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            Email email = new Email(e.Message);
+            MessageViewModel message = new MessageViewModel(e.Message);
 
             Invoke((MethodInvoker)(() =>
             {
-                _messages.Add(email);
+                _messages.Add(message);
 
                 if (Properties.Settings.Default.MaxMessages > 0)
                 {
@@ -113,16 +123,16 @@ namespace smtp4dev
 
                 if (Properties.Settings.Default.AutoViewNewMessages)
                 {
-                    ViewMessage(email);
+                    ViewMessage(message);
                 }
                 else if (!Visible && Properties.Settings.Default.BalloonNotifications)
                 {
                     string body = string.Format("From: {0}\nTo: {1}\nSubject: {2}\n<Click here to view more details>",
-                        email.FromAddress,
-                        string.Join(", ", email.ToAddresses),
-                        email.Subject);
+                        message.From,
+                        message.To,
+                        message.Subject);
 
-                    trayIcon.ShowBalloonTip(3000, "Email Recieved", body, ToolTipIcon.Info);
+                    trayIcon.ShowBalloonTip(3000, "Message Recieved", body, ToolTipIcon.Info);
                 }
 
                 if (Visible && Properties.Settings.Default.BringToFrontOnNewMessage)
@@ -135,7 +145,8 @@ namespace smtp4dev
 
         private Server _server;
 
-        private readonly BindingList<Email> _messages = new BindingList<Email>();
+        private readonly BindingList<MessageViewModel> _messages = new BindingList<MessageViewModel>();
+        private readonly BindingList<SessionViewModel> _sessions = new BindingList<SessionViewModel>();
 
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -149,12 +160,21 @@ namespace smtp4dev
             Visible = true;
         }
 
-        public Email SelectedEmail
+        public MessageViewModel SelectedMessage
         {
             get
             {
                 return
-                    (Email)messageGrid.SelectedRows.Cast<DataGridViewRow>().Select(row => row.DataBoundItem).FirstOrDefault();
+                    (MessageViewModel)messageGrid.SelectedRows.Cast<DataGridViewRow>().Select(row => row.DataBoundItem).FirstOrDefault();
+            }
+        }
+
+        public SessionViewModel SelectedSession
+        {
+            get
+            {
+                return
+                    (SessionViewModel)dataGridView1.SelectedRows.Cast<DataGridViewRow>().Select(row => row.DataBoundItem).FirstOrDefault();
             }
         }
 
@@ -165,18 +185,18 @@ namespace smtp4dev
 
         private void ViewSelectedMessage()
         {
-            if (SelectedEmail != null)
+            if (SelectedMessage != null)
             {
-                ViewMessage(SelectedEmail);
+                ViewMessage(SelectedMessage);
             }
         }
 
-        private void ViewMessage(Email email)
+        private void ViewMessage(MessageViewModel message)
         {
             TempFileCollection tempFiles = new TempFileCollection();
             FileInfo msgFile = new FileInfo(tempFiles.AddExtension("eml"));
-            email.SaveToFile(msgFile);
-             
+            message.SaveToFile(msgFile);
+
             Process.Start(msgFile.FullName);
             messageGrid.Refresh();
         }
@@ -245,7 +265,14 @@ namespace smtp4dev
 
         private void EditOptions()
         {
-            new OptionsForm().ShowDialog();
+            if (new OptionsForm().ShowDialog() == DialogResult.OK)
+            {
+                if (_server.IsRunning)
+                {
+                    StopServer();
+                    StartServer();
+                }
+            }
         }
 
         private void trayIcon_BalloonTipClicked(object sender, EventArgs e)
@@ -267,13 +294,13 @@ namespace smtp4dev
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            if (SelectedEmail != null)
+            if (SelectedMessage != null)
             {
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                if (saveMessageFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     try
                     {
-                        SelectedEmail.SaveToFile(new FileInfo(saveFileDialog.FileName));
+                        SelectedMessage.SaveToFile(new FileInfo(saveMessageFileDialog.FileName));
                     }
                     catch (IOException ex)
                     {
@@ -288,7 +315,7 @@ namespace smtp4dev
 
         private void deleteButton_Click(object sender, EventArgs e)
         {
-            _messages.Remove(SelectedEmail);
+            _messages.Remove(SelectedMessage);
         }
 
         private void stopListeningButton_Click(object sender, EventArgs e)
@@ -316,26 +343,16 @@ namespace smtp4dev
 
         private void messageGrid_SelectionChanged(object sender, EventArgs e)
         {
-            button2.Enabled = deleteButton.Enabled = viewButton.Enabled = saveButton.Enabled = SelectedEmail != null;
-        }
-
-        private void messageGrid_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
-        {
-            Email email = (Email)messageGrid.Rows[e.RowIndex].DataBoundItem;
-
-            if (messageGrid.Columns[e.ColumnIndex] == ToAddressesNice)
-            {
-                e.Value = string.Join(", ", email.ToAddresses);
-            }
+            button2.Enabled = deleteButton.Enabled = viewButton.Enabled = saveButton.Enabled = SelectedMessage != null;
         }
 
         private void messageGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if (e.RowIndex >= 0)
             {
-                Email email = (Email)messageGrid.Rows[e.RowIndex].DataBoundItem;
+                MessageViewModel message = (MessageViewModel)messageGrid.Rows[e.RowIndex].DataBoundItem;
 
-                if (!email.HasBeenViewed)
+                if (!message.HasBeenViewed)
                 {
                     e.CellStyle.Font = new Font(e.CellStyle.Font, FontStyle.Bold);
                 }
@@ -352,18 +369,23 @@ namespace smtp4dev
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Email email = SelectedEmail;
+            MessageViewModel message = SelectedMessage;
             TempFileCollection tempFiles = new TempFileCollection();
             FileInfo msgFile = new FileInfo(tempFiles.AddExtension("txt"));
-            email.SaveToFile(msgFile);
+            message.SaveToFile(msgFile);
 
             Process.Start(msgFile.FullName);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            EmailInspectorWindow form = new EmailInspectorWindow(SelectedEmail);
+            InspectorWindow form = new InspectorWindow(SelectedMessage.Message.Contents);
             form.Show();
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            SelectedSession.ViewLog();
         }
 
     }

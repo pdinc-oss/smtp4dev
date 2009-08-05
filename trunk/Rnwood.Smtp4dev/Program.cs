@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace smtp4dev
+namespace Rnwood.Smtp4dev
 {
     static class Program
     {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace smtp4dev.Properties {
+namespace Rnwood.Smtp4dev.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -140,6 +140,114 @@ namespace smtp4dev.Properties {
             }
             set {
                 this["MaxMessages"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableSSL {
+            get {
+                return ((bool)(this["EnableSSL"]));
+            }
+            set {
+                this["EnableSSL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Enable8BITMIME {
+            get {
+                return ((bool)(this["Enable8BITMIME"]));
+            }
+            set {
+                this["Enable8BITMIME"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EnableSTARTTLS {
+            get {
+                return ((bool)(this["EnableSTARTTLS"]));
+            }
+            set {
+                this["EnableSTARTTLS"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SSLCertificatePath {
+            get {
+                return ((string)(this["SSLCertificatePath"]));
+            }
+            set {
+                this["SSLCertificatePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("localhost")]
+        public string DomainName {
+            get {
+                return ((string)(this["DomainName"]));
+            }
+            set {
+                this["DomainName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EnableSIZE {
+            get {
+                return ((bool)(this["EnableSIZE"]));
+            }
+            set {
+                this["EnableSIZE"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EnableAUTH {
+            get {
+                return ((bool)(this["EnableAUTH"]));
+            }
+            set {
+                this["EnableAUTH"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public long MaximumMessageSize {
+            get {
+                return ((long)(this["MaximumMessageSize"]));
+            }
+            set {
+                this["MaximumMessageSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
+        public string IPAddress {
+            get {
+                return ((string)(this["IPAddress"]));
+            }
+            set {
+                this["IPAddress"] = value;
             }
         }
     }

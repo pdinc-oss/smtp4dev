@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.Win32;
 
-namespace smtp4dev
+namespace Rnwood.Smtp4dev
 {
     public static class RegistrySettings
     {

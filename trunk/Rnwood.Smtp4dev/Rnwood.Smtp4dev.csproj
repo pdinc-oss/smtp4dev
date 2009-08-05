@@ -8,8 +8,8 @@
     <ProjectGuid>{957A6C18-3016-403E-A04D-926D050BDEAE}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>smtp4dev</RootNamespace>
-    <AssemblyName>smtp4dev</AssemblyName>
+    <RootNamespace>Rnwood.Smtp4dev</RootNamespace>
+    <AssemblyName>Rnwood.Smtp4dev</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>Resources\Icon1.ico</ApplicationIcon>
@@ -66,17 +66,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviour.cs" />
-    <Compile Include="Email.cs" />
-    <Compile Include="EmailInspectorWindow.xaml.cs">
-      <DependentUpon>EmailInspectorWindow.xaml</DependentUpon>
+    <Compile Include="MessageInspector\InspectorWindow.xaml.cs">
+      <DependentUpon>InspectorWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="JoinStringArrayConvertor.cs" />
+    <Compile Include="MessageViewModel.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MessageInspector\MessageViewModel.cs" />
     <Compile Include="OptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -111,6 +112,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="RegistrySettings.cs" />
+    <Compile Include="SessionViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -118,7 +120,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\DataSources\anmar.SharpMimeTools.SharpMimeMessage.datasource" />
+    <None Include="Properties\DataSources\Rnwood.SmtpServer.Session.datasource" />
+    <None Include="Properties\DataSources\SMTPSession.datasource" />
     <None Include="Resources\Icon2.ico" />
+    <None Include="Resources\localhost.cer" />
+    <None Include="Resources\root.cer" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rnwood.SmtpServer\Rnwood.SmtpServer.csproj">
@@ -127,10 +133,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="EmailInspectorWindow.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="MessageInspector\InspectorWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="MessageInspector\document.png" />
+    <Resource Include="MessageInspector\folder.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

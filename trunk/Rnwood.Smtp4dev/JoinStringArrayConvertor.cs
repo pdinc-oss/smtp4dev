@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Data;
 
-namespace smtp4dev
+namespace Rnwood.Smtp4dev.MessageInspector
 {
     public class JoinStringArrayConvertor : IValueConverter
     {
