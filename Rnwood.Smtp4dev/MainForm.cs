@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
+using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -202,6 +203,12 @@ namespace Rnwood.Smtp4dev
                                                 trayIcon.ShowBalloonTip(3000, "Message Received", body, ToolTipIcon.Info);
                                             }
 
+                                            if (ConfigurationManager.AppSettings.AllKeys.Any(x => x.Equals("SaveMessageTo") && 
+                                                !string.IsNullOrEmpty(ConfigurationManager.AppSettings["SaveMessageTo"])))
+                                            {
+                                                SaveMessage(message, ConfigurationManager.AppSettings["SaveMessageTo"]);
+                                            }
+
                                             if (Visible && Settings.Default.BringToFrontOnNewMessage)
                                             {
                                                 BringToFront();
@@ -264,6 +271,21 @@ namespace Rnwood.Smtp4dev
 
             Process.Start(msgFile.FullName);
             messageGrid.Refresh();
+        }
+
+        private void SaveMessage(MessageViewModel message, string path)
+        {
+            if (string.IsNullOrEmpty(Settings.Default.SaveMessageTo))
+            {
+                return;
+            }
+
+            var timeStamp = DateTime.Now.ToString("yyyy.MM.dd_hhmmss");
+            var fileName = Path.Combine(path, timeStamp + "_" + Guid.NewGuid());
+            var msgFile = new FileInfo(fileName);
+
+            message.SaveToFile(msgFile);
+            //messageGrid.Refresh();
         }
 
         private void deleteAllButton_Click(object sender, EventArgs e)
