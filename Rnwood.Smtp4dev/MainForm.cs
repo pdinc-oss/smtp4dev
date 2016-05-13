@@ -281,10 +281,12 @@ namespace Rnwood.Smtp4dev
             }
 
             var timeStamp = DateTime.Now.ToString("yyyy.MM.dd_hhmmss");
-            var fileName = Path.Combine(path, timeStamp + "_" + Guid.NewGuid());
-            var msgFile = new FileInfo(fileName);
+            var to = message.To.Replace(',', '_').Replace(" ", "");
+            var commonName = Path.Combine(path, timeStamp + "_" + to + "_" + Guid.NewGuid());
+            var msgFile = new FileInfo(commonName + ".msg");
+            var attachmentsDirectory = new DirectoryInfo(commonName);
 
-            message.SaveToFile(msgFile);
+            message.SaveToFileWithAttachments(msgFile, attachmentsDirectory, commonName);
             //messageGrid.Refresh();
         }
 
