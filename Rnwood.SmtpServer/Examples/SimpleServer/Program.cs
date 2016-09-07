@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
 #endregion
@@ -17,22 +18,188 @@ namespace Rnwood.SmtpServer.Example
     /// </summary>
     internal class Program
     {
-        private static string mailsFolder = string.Empty;
+
+        ///
+        ///  
+        class Setting
+        {
+            public Setting()
+            { }
+
+            public Setting(string keyValuePair, string keyValuePairDelimeter = "=")
+            {
+                var items = keyValuePair.Split(new string[] { keyValuePairDelimeter }, StringSplitOptions.None);
+                Key = items[0];
+                Value = items[1];
+            }
+
+            public static Setting Create(string key, string value)
+            {
+                var retVal = new Setting { Key = key, Value = value };
+                return retVal;
+            }
+
+            public string Value { get; set; }
+
+            public string Key { get; set; }
+        }
+
+        class SimpleSettings
+        {
+            // e.g. called from command line like so...
+            // "port=25 mailsFolder=c:\temp\mails clearMailsOnStartup=false"
+            public SimpleSettings()
+            {
+                Settings = new List<Setting>();
+            }
+
+            // e.g. stored in app config line like so...
+            // <add key="singleSettingsLine" value="port=25 mailsFolder=c:\temp\mails clearMailsOnStartup=false" />
+            public void AddCommandlineArgs(string[] cmdLineArgs, string keyPrefixFilter = "", string keyValuePairDelimiter = "=")
+            {
+                foreach (var item in cmdLineArgs.Where(x=>x.StartsWith(keyPrefixFilter)))
+                {
+                    Settings.Add(new Setting(item, keyValuePairDelimiter));
+                }
+            }
+
+            // e.g. stored in app config line like so...
+            // <add key="settings" value="port=25 mailsFolder=c:\temp\mails clearMailsOnStartup=false" />
+            public void AddSingleLineSettings(string allSettingsInsideSingleString, string keyPrefixFilter = "", string keyValuePairDelimiter = "=", string settingDelimiter = " ")
+            {
+                var items = allSettingsInsideSingleString.Split(new string[] { settingDelimiter },
+                    StringSplitOptions.RemoveEmptyEntries);
+                AddCommandlineArgs(items, keyPrefixFilter, keyValuePairDelimiter);
+            }
+
+            // e.g. stored in app config line like so...
+            // <add key="myProg.port" value="port=25" />
+            // <add key="myProg.mailsFolder" value="c:\temp\mail" />
+            // <add key="myProg.clearMailsOnStartup" value="false" />
+            public void AddAppConfigSettings(string keyPrefixFilter = "")
+            {
+                foreach (var key in ConfigurationManager.AppSettings.AllKeys)
+                {
+                    var addTheSetting = true;
+                    if (!string.IsNullOrEmpty(keyPrefixFilter))
+                    {
+                        if (!key.StartsWith(keyPrefixFilter))
+                            addTheSetting = false;
+                    }
+
+                    if (addTheSetting)
+                        Settings.Add(Setting.Create(key, ConfigurationManager.AppSettings[key]));
+                }
+            }
+
+            public void AddAppConfigSetting(string appConfigKey)
+            {
+                Settings.Add(Setting.Create(appConfigKey, ConfigurationManager.AppSettings[appConfigKey]));
+            }
+
+            public List<Setting> Settings { get; set; }
+
+            public T Get<T>(string key, Func<string, T> convertFunc, T defaultValue = null) where T : class
+            {
+                foreach (var setting in Settings)
+                {
+                    if (setting.Key == key)
+                    {
+                        var retVal = convertFunc(setting.Value);
+                        return retVal;
+                    }
+                }
+                return defaultValue;
+            }
+
+            public string GetString(string key, string defaultValue = null)
+            {
+                foreach (var setting in Settings)
+                {
+                    if (setting.Key == key)
+                    {
+                        return setting.Value;
+                    }
+                }
+                return defaultValue;
+            }
+
+            public int GetInt(string key, int defaultValue = -1)
+            {
+                foreach (var setting in Settings)
+                {
+                    if (setting.Key == key)
+                    {
+                        return Int32.Parse(setting.Value);
+                    }
+                }
+                return defaultValue;
+            }
+
+            public bool GetBool(string key, bool defaultValue = false)
+            {
+                foreach (var setting in Settings)
+                {
+                    if (setting.Key == key)
+                    {
+                        return bool.Parse(setting.Value);
+                    }
+                }
+                return defaultValue;
+            }
+
+            public T GetEnum<T>(string key, T defaultValue) where T : struct, IConvertible
+            {
+                if (!typeof(T).IsEnum)
+                    throw new ArgumentException("T must be an enumerated type");
+
+                foreach (var setting in Settings)
+                {
+                    if (setting.Key == key)
+                    {
+                        return (T)Enum.Parse(typeof(T), setting.Value);
+                    }
+                }
+                return defaultValue;
+            }
+        }
+
+        class AppConfig
+        {
+            public AppConfig()
+            { }
+
+            public AppConfig(string[] args)
+            {
+                var settings = new SimpleSettings();
+                settings.AddCommandlineArgs(args);
+                settings.AddAppConfigSettings("simpleSmtpServer.");
+                MailsFolder = settings.GetString("simpleSmtpServer.mailsFolder");
+                ClearMailsOnStartup = settings.GetBool("simpleSmtpServer.clearMailsOnStartup");
+                Port = settings.GetEnum("port", Ports.SMTP);
+            }
+
+            public bool ClearMailsOnStartup { get; set; }
+
+            public Ports Port { get; set; }
+
+            public string MailsFolder { get; set; }
+        }
+
+        private static AppConfig config;
         private static void Main(string[] args)
         {
-            mailsFolder = ConfigurationManager.AppSettings["mailsFolder"];
-            if (string.IsNullOrEmpty(mailsFolder))
+            config = new AppConfig(args);
+            if (string.IsNullOrEmpty(config.MailsFolder))
                 throw new ConfigurationErrorsException("mailsFolder is null or empty");
-            if (!Directory.Exists(mailsFolder))
-                Directory.CreateDirectory(mailsFolder);
+            if (!Directory.Exists(config.MailsFolder))
+                Directory.CreateDirectory(config.MailsFolder);
 
-            var clearMailsFolderOnStartup = bool.Parse(ConfigurationManager.AppSettings["clearMailsOnStartup"]);
-            if (clearMailsFolderOnStartup)
-                ClearFolder(mailsFolder);
+            if (config.ClearMailsOnStartup)
+                ClearFolder(config.MailsFolder);
             List<IMessage> messages = new List<IMessage>();
             //DefaultServer server = new DefaultServer(Ports.AssignAutomatically);
-            Ports port = (Ports)Enum.Parse(typeof(Ports), ConfigurationManager.AppSettings["port"]);
-            DefaultServer server = new DefaultServer(port);
+            DefaultServer server = new DefaultServer(config.Port);
             server.SessionCompleted += SessionCompleted;
             server.MessageReceived += MessageReceived;
             server.SessionStarted += SessionStarted;
@@ -78,33 +245,9 @@ namespace Rnwood.SmtpServer.Example
 
             var parsedMail = new ParsedMail(e);
             var fileName = new MailFileName(parsedMail);
-            var fullFileName = Path.Combine(mailsFolder, fileName.Name);
+            var fullFileName = Path.Combine(config.MailsFolder, fileName.Name);
 
             WriteMailToDisk(fullFileName, parsedMail);
-
-            //    //If you wanted to write the message out to a file, then could do this...
-            //    mailIdx++;
-            //using (var inStream = e.Message.GetData())
-            //{
-            //    var mailFileName =
-            //    var file = Path.Combine(mailsFolder, "mail" + mailIdx + ".eml");
-            //    using (var outStream = File.Create(file))
-            //    {
-            //        byte[] buffer = new byte[1024];
-            //        int bytesRead = 0;
-            //        while ((bytesRead = inStream.Read(buffer, 0, buffer.Length)) > 0)
-            //        {
-            //            outStream.Write(buffer, 0, bytesRead);
-            //        }
-            //        outStream.Flush();
-            //    }
-            //}
-
-            //var outStream = new MemoryStream();
-            //var r = new StreamReader(outStream);
-            //r.re
-            //r
-            ////File.WriteAllBytes("myfile" + mailIdx + ".eml", e.Message.GetData().);
         }
 
         private static void WriteMailToDisk(string fullFileName, ParsedMail parsedMail)
@@ -120,13 +263,6 @@ namespace Rnwood.SmtpServer.Example
                     writer.Flush();
                 }
             }
-        }
-
-        private static string GetFileName(MessageEventArgs e)
-        {
-            var parsedMail = new ParsedMail(e);
-            var fileName = new MailFileName(parsedMail);
-            return fileName.Name;
         }
 
         class MailFileName
@@ -168,7 +304,6 @@ namespace Rnwood.SmtpServer.Example
         {
             public MailSubject()
             {
-
             }
 
             public MailSubject(MailContent mailContent)
