@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "exports": {
+    "Rnwood.SmtpServer/1.0.0": {
+      "type": "project",
+      "framework": ".NETFramework,Version=v4.0",
+      "compile": {
+        "bin/Debug/Rnwood.SmtpServer.dll": {}
+      },
+      "runtime": {
+        "bin/Debug/Rnwood.SmtpServer.dll": {}
+      },
+      "contentFiles": {
+        "bin/Debug/Rnwood.SmtpServer.pdb": {
+          "buildAction": "None",
+          "codeLanguage": "any",
+          "copyToOutput": true
+        }
+      }
+    }
+  }
+}
