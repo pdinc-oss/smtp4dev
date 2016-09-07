@@ -1,0 +1,3 @@
+﻿simpleSmtpServer.port=SMTP
+simpleSmtpServer.mailsFolder=c:\temp\mails
+simpleSmtpServer.clearMailsOnStartup=false

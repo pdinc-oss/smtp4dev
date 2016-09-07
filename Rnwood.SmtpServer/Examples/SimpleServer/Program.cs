@@ -97,6 +97,12 @@ namespace Rnwood.SmtpServer.Example
                 Settings.Add(Setting.Create(appConfigKey, ConfigurationManager.AppSettings[appConfigKey]));
             }
 
+            public void AddTextConfigSettings(string textConfigFile, string keyPrefixFilter = "", string keyValuePairDelimiter = "=")
+            {
+                var lines = File.ReadAllLines(textConfigFile);
+               AddCommandlineArgs(lines, keyPrefixFilter, keyValuePairDelimiter);
+            }
+
             public List<Setting> Settings { get; set; }
 
             public T Get<T>(string key, Func<string, T> convertFunc, T defaultValue = null) where T : class
@@ -173,6 +179,7 @@ namespace Rnwood.SmtpServer.Example
             {
                 var settings = new SimpleSettings();
                 settings.AddCommandlineArgs(args);
+                settings.AddTextConfigSettings("simpleSmtpServer.config.txt");
                 settings.AddAppConfigSettings("simpleSmtpServer.");
                 MailsFolder = settings.GetString("simpleSmtpServer.mailsFolder");
                 ClearMailsOnStartup = settings.GetBool("simpleSmtpServer.clearMailsOnStartup");
@@ -196,7 +203,10 @@ namespace Rnwood.SmtpServer.Example
                 Directory.CreateDirectory(config.MailsFolder);
 
             if (config.ClearMailsOnStartup)
+            {
+                Console.WriteLine("Clearing mail drop folder "   + config.MailsFolder);
                 ClearFolder(config.MailsFolder);
+            }
             List<IMessage> messages = new List<IMessage>();
             //DefaultServer server = new DefaultServer(Ports.AssignAutomatically);
             DefaultServer server = new DefaultServer(config.Port);
@@ -207,6 +217,7 @@ namespace Rnwood.SmtpServer.Example
 
             //do something to send mail
             Console.WriteLine("Listening on localhost at port " + server.PortNumber);
+            Console.WriteLine("Will write mails to folder " + config.MailsFolder);
             Console.WriteLine("Press any key to quit...");
             Console.ReadKey();
             server.Stop();
