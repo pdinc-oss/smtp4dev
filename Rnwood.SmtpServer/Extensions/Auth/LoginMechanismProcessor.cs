@@ -16,7 +16,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 
         #region IAuthMechanismProcessor Members
 
-        public async override Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
+        public override async Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
         {
             if (data != null)
             {
@@ -43,12 +43,12 @@ namespace Rnwood.SmtpServer.Extensions.Auth
                     return AuthMechanismProcessorStatus.Continue;
 
                 case States.WaitingForPassword:
-                    string password = DecodeBase64(data);
+                    var password = DecodeBase64(data);
                     State = States.Completed;
 
                     Credentials = new LoginAuthenticationCredentials(_username, password);
 
-                    AuthenticationResult result =
+                    var result =
                         await Connection.Server.Behaviour.ValidateAuthenticationCredentialsAsync(Connection,
                                                                                       Credentials);
 

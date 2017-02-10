@@ -7,7 +7,7 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
     {
         protected static bool VerifyBase64Response(string base64, string expectedString)
         {
-            string decodedString = Encoding.ASCII.GetString(Convert.FromBase64String(base64));
+            var decodedString = Encoding.ASCII.GetString(Convert.FromBase64String(base64));
             return decodedString.Equals(expectedString);
         }
 

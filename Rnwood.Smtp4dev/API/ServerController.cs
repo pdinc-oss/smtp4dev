@@ -12,40 +12,40 @@ namespace Rnwood.Smtp4dev.API
     [Route("api/server")]
     public class ServerController : Controller
     {
-        public ServerController(ISmtp4devEngine engine, ISettingsStore settingsStore)
+        public ServerController(ISmtp4DevEngine engine, ISettingsStore settingsStore)
         {
             _engine = engine;
             _settingsStore = settingsStore;
         }
 
-        private ISmtp4devEngine _engine;
-        private ISettingsStore _settingsStore;
+        private readonly ISmtp4DevEngine _engine;
+        private readonly ISettingsStore _settingsStore;
 
         // GET: api/values
         [HttpGet("{id}")]
         public Server Get(int id)
         {
-            Settings settings = _settingsStore.Load();
+            var settings = _settingsStore.Load();
 
             return new Server()
             {
-                isRunning = _engine.IsRunning,
-                error = _engine?.ServerError?.Message,
-                port = settings.Port,
-                isEnabled = settings.IsEnabled
+                IsRunning = _engine.IsRunning,
+                Error = _engine?.ServerError?.Message,
+                Port = settings.Port,
+                IsEnabled = settings.IsEnabled
             };
         }
 
         [HttpPut("{id}")]
         public Server Update([FromBody] ServerUpdate server)
         {
-            Settings settings = _settingsStore.Load();
+            var settings = _settingsStore.Load();
 
-            settings.Port = server.port;
-            settings.IsEnabled = server.isEnabled;
+            settings.Port = server.Port;
+            settings.IsEnabled = server.IsEnabled;
             _settingsStore.Save(settings);
 
-            return Get(server.id);
+            return Get(server.Id);
         }
 
         [HttpGet("events")]
@@ -53,7 +53,7 @@ namespace Rnwood.Smtp4dev.API
         {
             HttpContext.Response.ContentType = "text/event-stream";
 
-            AutoResetEvent stateChangedEvent = new AutoResetEvent(false);
+            var stateChangedEvent = new AutoResetEvent(false);
 
             _engine.StateChanged += (s, ea) =>
             {
@@ -65,6 +65,7 @@ namespace Rnwood.Smtp4dev.API
                 await stateChangedEvent.WaitOneAsync();
                 await HttpContext.Response.WriteAsync("event: statechanged\ndata: stateChange!\n\n");
             }
+            // ReSharper disable once FunctionNeverReturns
         }
     }
 }

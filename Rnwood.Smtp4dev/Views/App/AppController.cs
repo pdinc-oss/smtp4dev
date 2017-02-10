@@ -1,18 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Rnwood.Smtp4dev.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Rnwood.Smtp4dev.UI
+namespace Rnwood.Smtp4dev.Views.App
 {
     public class AppController : Controller
     {
-        public AppController()
-        {
-        }
-
         public IActionResult Index()
         {
             return View();

@@ -24,27 +24,21 @@ namespace Rnwood.SmtpServer
 
         public string Message { get; private set; }
 
-        public bool IsError
-        {
-            get { return Code >= 500 && Code <= 599; }
-        }
+        public bool IsError => Code >= 500 && Code <= 599;
 
-        public bool IsSuccess
-        {
-            get { return Code >= 200 && Code <= 299; }
-        }
+        public bool IsSuccess => Code >= 200 && Code <= 299;
 
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the response.
         /// </summary>
         public override string ToString()
         {
-            StringBuilder result = new StringBuilder();
-            string[] lines = Message.Split(new string[] { "\r\n" }, System.StringSplitOptions.None);
+            var result = new StringBuilder();
+            var lines = Message.Split(new string[] { "\r\n" }, System.StringSplitOptions.None);
 
-            for (int l = 0; l < lines.Length; l++)
+            for (var l = 0; l < lines.Length; l++)
             {
-                string line = lines[l];
+                var line = lines[l];
 
                 if (l == lines.Length - 1)
                 {

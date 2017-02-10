@@ -3,12 +3,10 @@
 using Rnwood.SmtpServer.Extensions;
 using Rnwood.SmtpServer.Verbs;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Security;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 #endregion
@@ -18,17 +16,17 @@ namespace Rnwood.SmtpServer
     public class Connection : IConnection
     {
         public IConnectionChannel ConnectionChannel { get; private set; }
-        private string _id;
+        private readonly string _id;
 
         public Connection(IServer server, IConnectionChannel connectionChannel, IVerbMap verbMap)
         {
-            _id = string.Format("[RemoteIP={0}]", connectionChannel.ClientIPAddress.ToString());
+            _id = string.Format("[RemoteIP={0}]", connectionChannel.ClientIpAddress.ToString());
 
             ConnectionChannel = connectionChannel;
             ConnectionChannel.Closed += OnConnectionChannelClosed;
 
             VerbMap = verbMap;
-            Session = server.Behaviour.OnCreateNewSession(this, ConnectionChannel.ClientIPAddress, DateTime.Now);
+            Session = server.Behaviour.OnCreateNewSession(this, ConnectionChannel.ClientIpAddress, DateTime.Now);
 
             Server = server;
 
@@ -60,10 +58,7 @@ namespace Rnwood.SmtpServer
             ConnectionChannel.SetReaderEncoding(encoding);
         }
 
-        public Encoding ReaderEncoding
-        {
-            get { return ConnectionChannel.ReaderEncoding; }
-        }
+        public Encoding ReaderEncoding => ConnectionChannel.ReaderEncoding;
 
         public void SetReaderEncodingToDefault()
         {
@@ -84,14 +79,11 @@ namespace Rnwood.SmtpServer
             await ConnectionChannel.ApplyStreamFilterAsync(filter);
         }
 
-        public MailVerb MailVerb
-        {
-            get { return (MailVerb)VerbMap.GetVerbProcessor("MAIL"); }
-        }
+        public MailVerb MailVerb => (MailVerb)VerbMap.GetVerbProcessor("MAIL");
 
         protected async Task WriteLineAndFlushAsync(string text, params object[] arg)
         {
-            string formattedText = string.Format(text, arg);
+            var formattedText = string.Format(text, arg);
             Session.AppendToLog(formattedText);
             await ConnectionChannel.WriteLineAsync(formattedText);
             await ConnectionChannel.FlushAsync();
@@ -104,7 +96,7 @@ namespace Rnwood.SmtpServer
 
         public async Task<string> ReadLineAsync()
         {
-            string text = await ConnectionChannel.ReadLineAsync();
+            var text = await ConnectionChannel.ReadLineAsync();
             Session.AppendToLog(text);
             return text;
         }
@@ -122,7 +114,7 @@ namespace Rnwood.SmtpServer
 
         public void CommitMessage()
         {
-            IMessage message = CurrentMessage.ToMessage();
+            var message = CurrentMessage.ToMessage();
             Session.AddMessage(message);
             CurrentMessage = null;
 
@@ -143,12 +135,12 @@ namespace Rnwood.SmtpServer
                 Server.Behaviour.OnSessionStarted(this, Session);
                 SetReaderEncoding(Server.Behaviour.GetDefaultEncoding(this));
 
-                if (Server.Behaviour.IsSSLEnabled(this))
+                if (Server.Behaviour.IsSslEnabled(this))
                 {
                     await ConnectionChannel.ApplyStreamFilterAsync(async s =>
                     {
-                        SslStream sslStream = new SslStream(s);
-                        await sslStream.AuthenticateAsServerAsync(Server.Behaviour.GetSSLCertificate(this));
+                        var sslStream = new SslStream(s);
+                        await sslStream.AuthenticateAsServerAsync(Server.Behaviour.GetSslCertificate(this));
                         return sslStream;
                     });
 
@@ -158,16 +150,16 @@ namespace Rnwood.SmtpServer
                 await WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.ServiceReady,
                                                Server.Behaviour.DomainName + " smtp4dev ready"));
 
-                int numberOfInvalidCommands = 0;
+                var numberOfInvalidCommands = 0;
                 while (ConnectionChannel.IsConnected)
                 {
-                    bool badCommand = false;
-                    SmtpCommand command = new SmtpCommand(await ReadLineAsync());
+                    var badCommand = false;
+                    var command = new SmtpCommand(await ReadLineAsync());
                     Server.Behaviour.OnCommandReceived(this, command);
 
                     if (command.IsValid)
                     {
-                        IVerb verbProcessor = VerbMap.GetVerbProcessor(command.Verb);
+                        var verbProcessor = VerbMap.GetVerbProcessor(command.Verb);
 
                         if (verbProcessor != null)
                         {

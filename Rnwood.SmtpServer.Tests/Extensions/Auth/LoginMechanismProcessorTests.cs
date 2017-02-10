@@ -10,10 +10,10 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
         [Fact]
         public async Task ProcessRepsonse_NoUsername_GetUsernameChallenge()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
 
-            LoginMechanismProcessor processor = Setup(mocks);
-            AuthMechanismProcessorStatus result = await processor.ProcessResponseAsync(null);
+            var processor = Setup(mocks);
+            var result = await processor.ProcessResponseAsync(null);
 
             Assert.Equal(AuthMechanismProcessorStatus.Continue, result);
             mocks.Connection.Verify(c =>
@@ -29,10 +29,10 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
         [Fact]
         public async Task ProcessRepsonse_Username_GetPasswordChallenge()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
 
-            LoginMechanismProcessor processor = Setup(mocks);
-            AuthMechanismProcessorStatus result = await processor.ProcessResponseAsync(EncodeBase64("rob"));
+            var processor = Setup(mocks);
+            var result = await processor.ProcessResponseAsync(EncodeBase64("rob"));
 
             Assert.Equal(AuthMechanismProcessorStatus.Continue, result);
 
@@ -51,9 +51,9 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
         {
             await Assert.ThrowsAsync<BadBase64Exception>(async () =>
             {
-                Mocks mocks = new Mocks();
+                var mocks = new Mocks();
 
-                LoginMechanismProcessor processor = Setup(mocks);
+                var processor = Setup(mocks);
                 await processor.ProcessResponseAsync(null);
                 await processor.ProcessResponseAsync("rob blah");
             });

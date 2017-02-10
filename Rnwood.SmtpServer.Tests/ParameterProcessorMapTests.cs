@@ -9,16 +9,16 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void GetProcessor_NotRegistered_Null()
         {
-            ParameterProcessorMap map = new ParameterProcessorMap();
+            var map = new ParameterProcessorMap();
             Assert.Null(map.GetProcessor("BLAH"));
         }
 
         [Fact]
         public void GetProcessor_Registered_Returned()
         {
-            Mock<IParameterProcessor> processor = new Mock<IParameterProcessor>();
+            var processor = new Mock<IParameterProcessor>();
 
-            ParameterProcessorMap map = new ParameterProcessorMap();
+            var map = new ParameterProcessorMap();
             map.SetProcessor("BLAH", processor.Object);
 
             Assert.Same(processor.Object, map.GetProcessor("BLAH"));
@@ -27,9 +27,9 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void GetProcessor_RegisteredDifferentCase_Returned()
         {
-            Mock<IParameterProcessor> processor = new Mock<IParameterProcessor>();
+            var processor = new Mock<IParameterProcessor>();
 
-            ParameterProcessorMap map = new ParameterProcessorMap();
+            var map = new ParameterProcessorMap();
             map.SetProcessor("blah", processor.Object);
 
             Assert.Same(processor.Object, map.GetProcessor("BLAH"));
@@ -38,11 +38,11 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public async Task Process_UnknownParameter_Throws()
         {
-            SmtpServerException e = await Assert.ThrowsAsync<SmtpServerException>(async () =>
+            var e = await Assert.ThrowsAsync<SmtpServerException>(async () =>
            {
-               Mocks mocks = new Mocks();
+               var mocks = new Mocks();
 
-               ParameterProcessorMap map = new ParameterProcessorMap();
+               var map = new ParameterProcessorMap();
                await map.ProcessAsync(mocks.Connection.Object, new string[] { "KEYA=VALUEA" }, true);
            });
 
@@ -52,20 +52,20 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public async Task Process_NoParameters_Accepted()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
 
-            ParameterProcessorMap map = new ParameterProcessorMap();
+            var map = new ParameterProcessorMap();
             await map.ProcessAsync(mocks.Connection.Object, new string[] { }, true);
         }
 
         [Fact]
         public async Task Process_KnownParameters_Processed()
         {
-            Mocks mocks = new Mocks();
-            Mock<IParameterProcessor> keyAProcessor = new Mock<IParameterProcessor>();
-            Mock<IParameterProcessor> keyBProcessor = new Mock<IParameterProcessor>();
+            var mocks = new Mocks();
+            var keyAProcessor = new Mock<IParameterProcessor>();
+            var keyBProcessor = new Mock<IParameterProcessor>();
 
-            ParameterProcessorMap map = new ParameterProcessorMap();
+            var map = new ParameterProcessorMap();
             map.SetProcessor("keya", keyAProcessor.Object);
             map.SetProcessor("keyb", keyBProcessor.Object);
 

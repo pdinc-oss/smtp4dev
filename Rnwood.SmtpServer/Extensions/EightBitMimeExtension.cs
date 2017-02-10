@@ -2,6 +2,8 @@
 
 #endregion
 
+using Rnwood.SmtpServer.Verbs;
+
 namespace Rnwood.SmtpServer.Extensions
 {
     public class EightBitMimeExtension : IExtension
@@ -22,18 +24,15 @@ namespace Rnwood.SmtpServer.Extensions
             public EightBitMimeExtensionProcessor(IConnection connection)
                 : base(connection)
             {
-                EightBitMimeDataVerb verb = new EightBitMimeDataVerb();
+                var verb = new EightBitMimeDataVerb();
                 connection.VerbMap.SetVerbProcessor("DATA", verb);
 
-                MailVerb mailVerbProcessor = connection.MailVerb;
-                MailFromVerb mailFromProcessor = mailVerbProcessor.FromSubVerb;
+                var mailVerbProcessor = connection.MailVerb;
+                var mailFromProcessor = mailVerbProcessor.FromSubVerb;
                 mailFromProcessor.ParameterProcessorMap.SetProcessor("BODY", verb);
             }
 
-            public override string[] EHLOKeywords
-            {
-                get { return new[] { "8BITMIME" }; }
-            }
+            public override string[] EhloKeywords => new[] { "8BITMIME" };
         }
 
         #endregion

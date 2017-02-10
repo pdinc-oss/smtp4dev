@@ -10,7 +10,7 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void AddTo()
         {
-            IMessageBuilder builder = GetInstance();
+            var builder = GetInstance();
 
             builder.To.Add("foo@bar.com");
             builder.To.Add("bar@foo.com");
@@ -25,18 +25,18 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void WriteData_Accepted()
         {
-            IMessageBuilder builder = GetInstance();
+            var builder = GetInstance();
 
-            byte[] writtenBytes = new byte[64 * 1024];
+            var writtenBytes = new byte[64 * 1024];
             new Random().NextBytes(writtenBytes);
 
-            using (Stream stream = builder.WriteData())
+            using (var stream = builder.WriteData())
             {
                 stream.Write(writtenBytes, 0, writtenBytes.Length);
             }
 
             byte[] readBytes;
-            using (Stream stream = builder.GetData())
+            using (var stream = builder.GetData())
             {
                 readBytes = new byte[stream.Length];
                 stream.Read(readBytes, 0, readBytes.Length);

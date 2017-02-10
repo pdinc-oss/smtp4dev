@@ -1,16 +1,15 @@
 ﻿#region
 
-using Rnwood.SmtpServer.Verbs;
 using System.Linq;
 using System.Threading.Tasks;
 
 #endregion
 
-namespace Rnwood.SmtpServer
+namespace Rnwood.SmtpServer.Verbs
 {
     public class MailFromVerb : IVerb
     {
-        private ICurrentDateTimeProvider _currentDateTimeProvider;
+        private readonly ICurrentDateTimeProvider _currentDateTimeProvider;
 
         public MailFromVerb(ICurrentDateTimeProvider currentDateTimeProvider)
         {
@@ -41,10 +40,10 @@ namespace Rnwood.SmtpServer
                 return;
             }
 
-            ArgumentsParser argumentsParser = new ArgumentsParser(command.ArgumentsText);
-            string[] arguments = argumentsParser.Arguments;
+            var argumentsParser = new ArgumentsParser(command.ArgumentsText);
+            var arguments = argumentsParser.Arguments;
 
-            string from = arguments.First();
+            var from = arguments.First();
             if (from.StartsWith("<"))
                 from = from.Remove(0, 1);
 
@@ -59,7 +58,7 @@ namespace Rnwood.SmtpServer
             try
             {
                 await ParameterProcessorMap.ProcessAsync(connection, arguments.Skip(1).ToArray(), true);
-                await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.OK, "New message started"));
+                await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.Ok, "New message started"));
             }
             catch
             {

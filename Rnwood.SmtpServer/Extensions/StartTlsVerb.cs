@@ -10,7 +10,7 @@ namespace Rnwood.SmtpServer.Extensions
     {
         public async Task ProcessAsync(IConnection connection, SmtpCommand command)
         {
-            X509Certificate certificate = connection.Server.Behaviour.GetSSLCertificate(connection);
+            var certificate = connection.Server.Behaviour.GetSslCertificate(connection);
 
             if (certificate == null)
             {
@@ -27,7 +27,7 @@ namespace Rnwood.SmtpServer.Extensions
 
             await connection.ApplyStreamFilterAsync(async stream =>
                                                      {
-                                                         SslStream sslStream = new SslStream(stream);
+                                                         var sslStream = new SslStream(stream);
                                                          await sslStream.AuthenticateAsServerAsync(certificate
                                                              , false,
                                                              sslProtos,

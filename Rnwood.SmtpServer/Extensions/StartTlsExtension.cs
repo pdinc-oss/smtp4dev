@@ -23,7 +23,7 @@ namespace Rnwood.SmtpServer.Extensions
 
             public IConnection Connection { get; private set; }
 
-            public string[] EHLOKeywords
+            public string[] EhloKeywords
             {
                 get
                 {

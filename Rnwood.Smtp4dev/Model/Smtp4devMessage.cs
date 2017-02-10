@@ -1,37 +1,33 @@
 ﻿using MimeKit;
 using Rnwood.SmtpServer;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Rnwood.Smtp4dev.Model
 {
-    internal class Smtp4devMessage : MemoryMessage, ISmtp4devMessage
+    internal class Smtp4DevMessage : MemoryMessage, ISmtp4DevMessage
     {
-        private Smtp4devMessage(Guid id)
+        private Smtp4DevMessage(Guid id)
         {
             Id = id;
         }
 
-        public Guid Id { get; private set; }
+        public Guid Id { get; }
 
         public string Subject { get; private set; }
 
         public new class Builder : MemoryMessage.Builder
         {
-            public Builder() : base(new Smtp4devMessage(Guid.NewGuid()))
+            public Builder() : base(new Smtp4DevMessage(Guid.NewGuid()))
             {
             }
 
             public override IMessage ToMessage()
             {
-                Smtp4devMessage message = (Smtp4devMessage)base.ToMessage();
+                var message = (Smtp4DevMessage)base.ToMessage();
 
                 try
                 {
-                    MimeMessage mimeMessage = MimeMessage.Load(message.GetData());
+                    var mimeMessage = MimeMessage.Load(message.GetData());
                     message.Subject = mimeMessage.Subject;
                 }
                 catch (FormatException)

@@ -9,7 +9,7 @@ namespace Rnwood.SmtpServer.Extensions
 
         public IConnection Connection { get; private set; }
 
-        public abstract string[] EHLOKeywords
+        public abstract string[] EhloKeywords
         {
             get;
         }

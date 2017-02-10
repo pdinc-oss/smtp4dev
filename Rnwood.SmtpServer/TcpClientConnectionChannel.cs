@@ -71,10 +71,7 @@ namespace Rnwood.SmtpServer
             set { _tcpClient.SendTimeout = (int)Math.Min(int.MaxValue, value.TotalMilliseconds); }
         }
 
-        public IPAddress ClientIPAddress
-        {
-            get { return ((IPEndPoint)_tcpClient.Client.RemoteEndPoint).Address; }
-        }
+        public IPAddress ClientIpAddress => ((IPEndPoint)_tcpClient.Client.RemoteEndPoint).Address;
 
         public async Task ApplyStreamFilterAsync(Func<Stream, Task<Stream>> filter)
         {
@@ -92,7 +89,7 @@ namespace Rnwood.SmtpServer
         {
             try
             {
-                string text = await _reader.ReadLineAsync();
+                var text = await _reader.ReadLineAsync();
 
                 if (text == null)
                 {

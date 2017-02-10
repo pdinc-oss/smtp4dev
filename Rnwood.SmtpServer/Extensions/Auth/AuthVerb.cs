@@ -15,7 +15,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 
         public async Task ProcessAsync(IConnection connection, SmtpCommand command)
         {
-            ArgumentsParser argumentsParser = new ArgumentsParser(command.ArgumentsText);
+            var argumentsParser = new ArgumentsParser(command.ArgumentsText);
 
             if (argumentsParser.Arguments.Length > 0)
             {
@@ -25,8 +25,8 @@ namespace Rnwood.SmtpServer.Extensions.Auth
                                                                    "Already authenticated"));
                 }
 
-                string mechanismId = argumentsParser.Arguments[0];
-                IAuthMechanism mechanism = AuthExtensionProcessor.MechanismMap.Get(mechanismId);
+                var mechanismId = argumentsParser.Arguments[0];
+                var mechanism = AuthExtensionProcessor.MechanismMap.Get(mechanismId);
 
                 if (mechanism == null)
                 {
@@ -42,7 +42,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
                                          "Specified AUTH mechanism not allowed right now (might require secure connection etc)"));
                 }
 
-                IAuthMechanismProcessor authMechanismProcessor =
+                var authMechanismProcessor =
                     mechanism.CreateAuthMechanismProcessor(connection);
 
                 string initialData = null;
@@ -51,11 +51,11 @@ namespace Rnwood.SmtpServer.Extensions.Auth
                     initialData = string.Join(" ", argumentsParser.Arguments.Skip(1).ToArray());
                 }
 
-                AuthMechanismProcessorStatus status =
+                var status =
                     await authMechanismProcessor.ProcessResponseAsync(initialData);
                 while (status == AuthMechanismProcessorStatus.Continue)
                 {
-                    string response = await connection.ReadLineAsync();
+                    var response = await connection.ReadLineAsync();
 
                     if (response == "*")
                     {
@@ -68,7 +68,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 
                 if (status == AuthMechanismProcessorStatus.Success)
                 {
-                    await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.AuthenticationOK,
+                    await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.AuthenticationOk,
                                                               "Authenticated OK"));
                     connection.Session.Authenticated = true;
                     connection.Session.AuthenticationCredentials = authMechanismProcessor.Credentials;

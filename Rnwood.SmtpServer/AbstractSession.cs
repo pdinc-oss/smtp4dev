@@ -43,7 +43,7 @@ namespace Rnwood.SmtpServer
             _messages.Add(message);
         }
 
-        private List<IMessage> _messages;
+        private readonly List<IMessage> _messages;
 
         public bool CompletedNormally { get; set; }
 

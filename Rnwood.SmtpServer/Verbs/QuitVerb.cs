@@ -1,11 +1,10 @@
 ﻿#region
 
-using Rnwood.SmtpServer.Verbs;
 using System.Threading.Tasks;
 
 #endregion
 
-namespace Rnwood.SmtpServer
+namespace Rnwood.SmtpServer.Verbs
 {
     public class QuitVerb : IVerb
     {

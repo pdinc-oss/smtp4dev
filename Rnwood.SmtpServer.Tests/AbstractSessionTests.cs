@@ -11,7 +11,7 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void AppendToLog()
         {
-            IEditableSession session = GetSession();
+            var session = GetSession();
             session.AppendToLog("Blah1");
             session.AppendToLog("Blah2");
 
@@ -22,15 +22,15 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void GetMessages_InitiallyEmpty()
         {
-            IEditableSession session = GetSession();
+            var session = GetSession();
             Assert.Equal(0, session.GetMessages().Length);
         }
 
         [Fact]
         public void AddMessage()
         {
-            IEditableSession session = GetSession();
-            Mock<IMessage> message = new Mock<IMessage>();
+            var session = GetSession();
+            var message = new Mock<IMessage>();
 
             session.AddMessage(message.Object);
 

@@ -3,15 +3,15 @@ using System.Text;
 
 namespace Rnwood.SmtpServer
 {
-    public class ASCIISevenBitTruncatingEncoding : Encoding
+    public class AsciiSevenBitTruncatingEncoding : Encoding
     {
-        public ASCIISevenBitTruncatingEncoding()
+        public AsciiSevenBitTruncatingEncoding()
         {
             _asciiEncoding = Encoding.GetEncoding("ASCII", new EncodingFallback(),
                                                   new DecodingFallback());
         }
 
-        private Encoding _asciiEncoding;
+        private readonly Encoding _asciiEncoding;
 
         public override int GetByteCount(char[] chars, int index, int count)
         {
@@ -45,10 +45,7 @@ namespace Rnwood.SmtpServer
 
         private class EncodingFallback : EncoderFallback
         {
-            public override int MaxCharCount
-            {
-                get { return 1; }
-            }
+            public override int MaxCharCount => 1;
 
             public override EncoderFallbackBuffer CreateFallbackBuffer()
             {
@@ -101,19 +98,13 @@ namespace Rnwood.SmtpServer
                 private char _char;
                 private bool _charRead;
 
-                public override int Remaining
-                {
-                    get { return !_charRead ? 1 : 0; }
-                }
+                public override int Remaining => !_charRead ? 1 : 0;
             }
         }
 
         private class DecodingFallback : DecoderFallback
         {
-            public override int MaxCharCount
-            {
-                get { return 1; }
-            }
+            public override int MaxCharCount => 1;
 
             public override DecoderFallbackBuffer CreateFallbackBuffer()
             {
@@ -127,10 +118,7 @@ namespace Rnwood.SmtpServer
                 private int _fallbackIndex;
                 private string _fallbackString;
 
-                public override int Remaining
-                {
-                    get { return _fallbackString.Length - _fallbackIndex; }
-                }
+                public override int Remaining => _fallbackString.Length - _fallbackIndex;
 
                 public override bool Fallback(byte[] bytesUnknown, int index)
                 {

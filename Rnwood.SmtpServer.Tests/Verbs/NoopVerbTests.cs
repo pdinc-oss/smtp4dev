@@ -9,12 +9,12 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         [Fact]
         public async Task Noop()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
 
-            NoopVerb verb = new NoopVerb();
+            var verb = new NoopVerb();
             await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("NOOP"));
 
-            mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
+            mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.Ok);
         }
     }
 }

@@ -57,13 +57,7 @@ namespace Rnwood.SmtpServer
         {
         }
 
-        new protected DefaultServerBehaviour Behaviour
-        {
-            get
-            {
-                return (DefaultServerBehaviour)base.Behaviour;
-            }
-        }
+        protected new DefaultServerBehaviour Behaviour => (DefaultServerBehaviour)base.Behaviour;
 
         public event EventHandler<MessageEventArgs> MessageReceived
         {

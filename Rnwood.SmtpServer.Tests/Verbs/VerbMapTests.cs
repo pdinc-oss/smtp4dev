@@ -10,8 +10,8 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         [Fact]
         public void GetVerbProcessor_RegisteredVerb_ReturnsVerb()
         {
-            VerbMap verbMap = new VerbMap();
-            Mock<IVerb> verbMock = new Mock<IVerb>();
+            var verbMap = new VerbMap();
+            var verbMock = new Mock<IVerb>();
 
             verbMap.SetVerbProcessor("verb", verbMock.Object);
 
@@ -21,8 +21,8 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         [Fact]
         public void GetVerbProcessor_RegisteredVerbWithDifferentCase_ReturnsVerb()
         {
-            VerbMap verbMap = new VerbMap();
-            Mock<IVerb> verbMock = new Mock<IVerb>();
+            var verbMap = new VerbMap();
+            var verbMock = new Mock<IVerb>();
 
             verbMap.SetVerbProcessor("vErB", verbMock.Object);
 
@@ -32,7 +32,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         [Fact]
         public void GetVerbProcessor_NoRegisteredVerb_ReturnsNull()
         {
-            VerbMap verbMap = new VerbMap();
+            var verbMap = new VerbMap();
 
             Assert.Null(verbMap.GetVerbProcessor("VERB"));
         }
@@ -40,8 +40,8 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         [Fact]
         public void SetVerbProcessor_RegisteredVerbAgainWithNull_ClearsRegistration()
         {
-            VerbMap verbMap = new VerbMap();
-            Mock<IVerb> verbMock = new Mock<IVerb>();
+            var verbMap = new VerbMap();
+            var verbMock = new Mock<IVerb>();
             verbMap.SetVerbProcessor("verb", verbMock.Object);
 
             verbMap.SetVerbProcessor("verb", null);
@@ -52,8 +52,8 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         [Fact]
         public void SetVerbProcessor_RegisteredVerbAgainDifferentCaseWithNull_ClearsRegistration()
         {
-            VerbMap verbMap = new VerbMap();
-            Mock<IVerb> verbMock = new Mock<IVerb>();
+            var verbMap = new VerbMap();
+            var verbMock = new Mock<IVerb>();
             verbMap.SetVerbProcessor("verb", verbMock.Object);
 
             verbMap.SetVerbProcessor("vErb", null);
@@ -64,9 +64,9 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         [Fact]
         public void SetVerbProcessor_RegisteredVerbAgain_UpdatesRegistration()
         {
-            VerbMap verbMap = new VerbMap();
-            Mock<IVerb> verbMock1 = new Mock<IVerb>();
-            Mock<IVerb> verbMock2 = new Mock<IVerb>();
+            var verbMap = new VerbMap();
+            var verbMock1 = new Mock<IVerb>();
+            var verbMock2 = new Mock<IVerb>();
             verbMap.SetVerbProcessor("verb", verbMock1.Object);
 
             verbMap.SetVerbProcessor("veRb", verbMock2.Object);

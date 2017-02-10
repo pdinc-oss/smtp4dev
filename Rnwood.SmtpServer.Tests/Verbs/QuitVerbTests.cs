@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Rnwood.SmtpServer.Verbs;
 using Xunit;
 
 namespace Rnwood.SmtpServer.Tests.Verbs
@@ -8,9 +9,9 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         [Fact]
         public async Task Quit_RespondsWithClosingChannel()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
 
-            QuitVerb quitVerb = new QuitVerb();
+            var quitVerb = new QuitVerb();
             await quitVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("QUIT"));
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.ClosingTransmissionChannel);

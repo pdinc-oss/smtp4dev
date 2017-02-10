@@ -9,9 +9,9 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void InnerException()
         {
-            Exception innerException = new Exception();
+            var innerException = new Exception();
 
-            SmtpServerException e = new SmtpServerException(new SmtpResponse(StandardSmtpResponseCode.ExceededStorageAllocation, "Blah"), innerException);
+            var e = new SmtpServerException(new SmtpResponse(StandardSmtpResponseCode.ExceededStorageAllocation, "Blah"), innerException);
 
             Assert.Same(innerException, e.InnerException);
         }
@@ -19,8 +19,8 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void SmtpResponse()
         {
-            SmtpResponse smtpResponse = new SmtpResponse(StandardSmtpResponseCode.ExceededStorageAllocation, "Blah");
-            SmtpServerException e = new SmtpServerException(smtpResponse);
+            var smtpResponse = new SmtpResponse(StandardSmtpResponseCode.ExceededStorageAllocation, "Blah");
+            var e = new SmtpServerException(smtpResponse);
 
             Assert.Same(smtpResponse, e.SmtpResponse);
         }

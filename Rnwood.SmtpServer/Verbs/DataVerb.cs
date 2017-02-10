@@ -1,17 +1,16 @@
 ﻿#region
 
-using Rnwood.SmtpServer.Verbs;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
 #endregion
 
-namespace Rnwood.SmtpServer
+namespace Rnwood.SmtpServer.Verbs
 {
     public class DataVerb : IVerb
     {
-        public async virtual Task ProcessAsync(IConnection connection, SmtpCommand command)
+        public virtual async Task ProcessAsync(IConnection connection, SmtpCommand command)
         {
             if (connection.CurrentMessage == null)
             {
@@ -24,13 +23,13 @@ namespace Rnwood.SmtpServer
             await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.StartMailInputEndWithDot,
                                                                "End message with period"));
 
-            using (StreamWriter writer = new StreamWriter(connection.CurrentMessage.WriteData(), connection.ReaderEncoding))
+            using (var writer = new StreamWriter(connection.CurrentMessage.WriteData(), connection.ReaderEncoding))
             {
-                bool firstLine = true;
+                var firstLine = true;
 
                 do
                 {
-                    string line = await connection.ReadLineAsync();
+                    var line = await connection.ReadLineAsync();
 
                     if (line != ".")
                     {
@@ -50,7 +49,7 @@ namespace Rnwood.SmtpServer
                 } while (true);
 
                 writer.Flush();
-                long? maxMessageSize =
+                var maxMessageSize =
                     connection.Server.Behaviour.GetMaximumMessageSize(connection);
 
                 if (maxMessageSize.HasValue && writer.BaseStream.Length > maxMessageSize.Value)
@@ -63,7 +62,7 @@ namespace Rnwood.SmtpServer
                 {
                     writer.Dispose();
                     connection.Server.Behaviour.OnMessageCompleted(connection);
-                    await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.OK, "Mail accepted"));
+                    await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.Ok, "Mail accepted"));
                     connection.CommitMessage();
                 }
             }

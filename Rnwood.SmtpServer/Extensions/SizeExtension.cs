@@ -35,7 +35,7 @@ namespace Rnwood.SmtpServer.Extensions
 
                     if (long.TryParse(value, out messageSize) && messageSize > 0)
                     {
-                        long? maxMessageSize = Connection.Server.Behaviour.GetMaximumMessageSize(Connection);
+                        var maxMessageSize = Connection.Server.Behaviour.GetMaximumMessageSize(Connection);
                         connection.CurrentMessage.DeclaredMessageSize = messageSize;
 
                         if (maxMessageSize.HasValue && messageSize > maxMessageSize)
@@ -54,11 +54,11 @@ namespace Rnwood.SmtpServer.Extensions
 
             #endregion
 
-            public string[] EHLOKeywords
+            public string[] EhloKeywords
             {
                 get
                 {
-                    long? maxMessageSize = Connection.Server.Behaviour.GetMaximumMessageSize(Connection);
+                    var maxMessageSize = Connection.Server.Behaviour.GetMaximumMessageSize(Connection);
 
                     if (maxMessageSize.HasValue)
                     {

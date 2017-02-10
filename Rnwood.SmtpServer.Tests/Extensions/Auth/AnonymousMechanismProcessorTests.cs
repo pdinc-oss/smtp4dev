@@ -27,14 +27,14 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
 
         private async Task ProcessResponseAsync(AuthenticationResult authenticationResult, AuthMechanismProcessorStatus authMechanismProcessorStatus)
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
             mocks.ServerBehaviour.Setup(
                 b =>
                 b.ValidateAuthenticationCredentialsAsync(mocks.Connection.Object, It.IsAny<AnonymousAuthenticationCredentials>()))
                 .ReturnsAsync(authenticationResult);
 
-            AnonymousMechanismProcessor anonymousMechanismProcessor = new AnonymousMechanismProcessor(mocks.Connection.Object);
-            AuthMechanismProcessorStatus result = await anonymousMechanismProcessor.ProcessResponseAsync(null);
+            var anonymousMechanismProcessor = new AnonymousMechanismProcessor(mocks.Connection.Object);
+            var result = await anonymousMechanismProcessor.ProcessResponseAsync(null);
 
             Assert.Equal(authMechanismProcessorStatus, result);
 

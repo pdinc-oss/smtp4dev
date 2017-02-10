@@ -30,15 +30,9 @@ namespace Rnwood.SmtpServer
             get; private set;
         }
 
-        private List<string> _to = new List<string>();
+        private readonly List<string> _to = new List<string>();
 
-        public string[] To
-        {
-            get
-            {
-                return _to.ToArray();
-            }
-        }
+        public string[] To => _to.ToArray();
 
         public bool SecureConnection
         {
@@ -78,7 +72,7 @@ namespace Rnwood.SmtpServer
                 _message = new FileMessage(file, keepOnDispose);
             }
 
-            private FileMessage _message;
+            private readonly FileMessage _message;
 
             public ISession Session
             {
@@ -119,13 +113,7 @@ namespace Rnwood.SmtpServer
                 }
             }
 
-            public ICollection<string> To
-            {
-                get
-                {
-                    return _message._to;
-                }
-            }
+            public ICollection<string> To => _message._to;
 
             public bool SecureConnection
             {

@@ -15,10 +15,10 @@ namespace Rnwood.SmtpServer.Verbs
 
         public IVerbMap SubVerbMap { get; private set; }
 
-        public async virtual Task ProcessAsync(IConnection connection, SmtpCommand command)
+        public virtual async Task ProcessAsync(IConnection connection, SmtpCommand command)
         {
-            SmtpCommand subrequest = new SmtpCommand(command.ArgumentsText);
-            IVerb verbProcessor = SubVerbMap.GetVerbProcessor(subrequest.Verb);
+            var subrequest = new SmtpCommand(command.ArgumentsText);
+            var verbProcessor = SubVerbMap.GetVerbProcessor(subrequest.Verb);
 
             if (verbProcessor != null)
             {

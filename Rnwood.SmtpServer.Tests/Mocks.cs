@@ -25,15 +25,15 @@ namespace Rnwood.SmtpServer.Tests
 
             Connection.SetupGet(c => c.Session).Returns(Session.Object);
             Connection.SetupGet(c => c.Server).Returns(Server.Object);
-            Connection.SetupGet(c => c.ReaderEncoding).Returns(new ASCIISevenBitTruncatingEncoding());
+            Connection.SetupGet(c => c.ReaderEncoding).Returns(new AsciiSevenBitTruncatingEncoding());
             Connection.Setup(s => s.CloseConnectionAsync()).Returns(() => ConnectionChannel.Object.CloseAync());
 
             Server.SetupGet(s => s.Behaviour).Returns(ServerBehaviour.Object);
 
-            bool isConnected = true;
+            var isConnected = true;
             ConnectionChannel.Setup(s => s.IsConnected).Returns(() => isConnected);
             ConnectionChannel.Setup(s => s.CloseAync()).Returns(() => Task.Run(() => isConnected = false));
-            ConnectionChannel.Setup(s => s.ClientIPAddress).Returns(IPAddress.Loopback);
+            ConnectionChannel.Setup(s => s.ClientIpAddress).Returns(IPAddress.Loopback);
         }
 
         public Mock<IConnection> Connection { get; private set; }

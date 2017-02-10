@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Rnwood.SmtpServer.Verbs;
 using Xunit;
 
 namespace Rnwood.SmtpServer.Tests.Verbs
@@ -21,14 +22,14 @@ namespace Rnwood.SmtpServer.Tests.Verbs
 
         private async Task TestGoodAddressAsync(string address, string expectedAddress)
         {
-            Mocks mocks = new Mocks();
-            MemoryMessage.Builder messageBuilder = new MemoryMessage.Builder();
+            var mocks = new Mocks();
+            var messageBuilder = new MemoryMessage.Builder();
             mocks.Connection.SetupGet(c => c.CurrentMessage).Returns(messageBuilder);
 
-            RcptToVerb verb = new RcptToVerb();
+            var verb = new RcptToVerb();
             await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("TO " + address));
 
-            mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
+            mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.Ok);
             Assert.Equal(expectedAddress, messageBuilder.To.First());
         }
 
@@ -53,11 +54,11 @@ namespace Rnwood.SmtpServer.Tests.Verbs
 
         private async Task TestBadAddressAsync(string address)
         {
-            Mocks mocks = new Mocks();
-            MemoryMessage.Builder messageBuilder = new MemoryMessage.Builder();
+            var mocks = new Mocks();
+            var messageBuilder = new MemoryMessage.Builder();
             mocks.Connection.SetupGet(c => c.CurrentMessage).Returns(messageBuilder);
 
-            RcptToVerb verb = new RcptToVerb();
+            var verb = new RcptToVerb();
             await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("TO " + address));
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.SyntaxErrorInCommandArguments);

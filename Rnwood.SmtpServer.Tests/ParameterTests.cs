@@ -7,7 +7,7 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void Name()
         {
-            Parameter p = new Parameter("name", "value");
+            var p = new Parameter("name", "value");
 
             Assert.Equal("name", p.Name);
         }
@@ -15,7 +15,7 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void Value()
         {
-            Parameter p = new Parameter("name", "value");
+            var p = new Parameter("name", "value");
 
             Assert.Equal("value", p.Value);
         }

@@ -17,7 +17,7 @@ namespace Rnwood.SmtpServer
     public class DefaultServerBehaviour : IServerBehaviour
     {
         private readonly X509Certificate _sslCertificate;
-        private bool _allowRemoteConnections;
+        private readonly bool _allowRemoteConnections;
 
         public DefaultServerBehaviour(bool allowRemoteConnections, X509Certificate sslCertificate)
             : this(allowRemoteConnections, 587, sslCertificate)
@@ -50,7 +50,7 @@ namespace Rnwood.SmtpServer
 
         public virtual Encoding GetDefaultEncoding(IConnection connection)
         {
-            return new ASCIISevenBitTruncatingEncoding();
+            return new AsciiSevenBitTruncatingEncoding();
         }
 
         public virtual void OnMessageReceived(IConnection connection, IMessage message)
@@ -61,19 +61,13 @@ namespace Rnwood.SmtpServer
             }
         }
 
-        public virtual string DomainName
-        {
-            get { return Environment.MachineName; }
-        }
+        public virtual string DomainName => Environment.MachineName;
 
-        public virtual IPAddress IpAddress
-        {
-            get { return _allowRemoteConnections ? IPAddress.Any : IPAddress.Loopback; }
-        }
+        public virtual IPAddress IpAddress => _allowRemoteConnections ? IPAddress.Any : IPAddress.Loopback;
 
         public virtual int PortNumber { get; private set; }
 
-        public bool IsSSLEnabled(IConnection connection)
+        public bool IsSslEnabled(IConnection connection)
         {
             return _sslCertificate != null;
         }
@@ -88,7 +82,7 @@ namespace Rnwood.SmtpServer
             return null;
         }
 
-        public virtual X509Certificate GetSSLCertificate(IConnection connection)
+        public virtual X509Certificate GetSslCertificate(IConnection connection)
         {
             return _sslCertificate;
         }
@@ -99,7 +93,7 @@ namespace Rnwood.SmtpServer
 
         public virtual IEnumerable<IExtension> GetExtensions(IConnection connection)
         {
-            List<IExtension> extensions = new List<IExtension>(new IExtension[] { new EightBitMimeExtension(), new SizeExtension() });
+            var extensions = new List<IExtension>(new IExtension[] { new EightBitMimeExtension(), new SizeExtension() });
 
             if (_sslCertificate != null)
             {
@@ -135,12 +129,9 @@ namespace Rnwood.SmtpServer
             return new TimeSpan(0, 0, 30);
         }
 
-        public int MaximumNumberOfSequentialBadCommands
-        {
-            get { return 10; }
-        }
+        public int MaximumNumberOfSequentialBadCommands => 10;
 
-        public async virtual Task<AuthenticationResult> ValidateAuthenticationCredentialsAsync(IConnection connection,
+        public virtual async Task<AuthenticationResult> ValidateAuthenticationCredentialsAsync(IConnection connection,
                                                                           IAuthenticationCredentials request)
         {
             var handlers = AuthenticationCredentialsValidationRequiredAsync;
@@ -151,7 +142,7 @@ namespace Rnwood.SmtpServer
                     .Cast<Func<object, AuthenticationCredentialsValidationEventArgs, Task>>()
                     .Select(h =>
                     {
-                        AuthenticationCredentialsValidationEventArgs args = new AuthenticationCredentialsValidationEventArgs(request);
+                        var args = new AuthenticationCredentialsValidationEventArgs(request);
                         return new { Args = args, Task = h(this, args) };
                     });
 

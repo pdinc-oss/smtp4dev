@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MimeKit;
-using Rnwood.Smtp4dev.API;
 using Rnwood.Smtp4dev.API.DTO;
-using Rnwood.Smtp4dev.Controllers.API.DTO;
 using Rnwood.Smtp4dev.Model;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,7 +15,7 @@ namespace Rnwood.Smtp4dev.API
     [Route("api/message")]
     public class MessagesController : Controller
     {
-        private IMessageStore _messageStore;
+        private readonly IMessageStore _messageStore;
 
         public MessagesController(IMessageStore messageStore)
         {
@@ -29,14 +25,18 @@ namespace Rnwood.Smtp4dev.API
         [HttpGet("{searchTerm?}")]
         public IEnumerable<Message> Get(string searchTerm)
         {
-            if (!string.IsNullOrEmpty(searchTerm))
-            {
-                return _messageStore.SearchMessages(searchTerm).Select(m => new Message(m));
-            }
-            else
-            {
-                return _messageStore.Messages.Select(m => new Message(m));
-            }
+            return !string.IsNullOrEmpty(searchTerm)
+                ? _messageStore.SearchMessages(searchTerm).Select(m => new Message(m))
+                : _messageStore.Messages.Select(m => new Message(m));
+        }
+
+        [HttpGet("{id}")]
+        public Message Get(Guid id)
+        {
+            return _messageStore.Messages
+                .Where(m => m.Id == id)
+                .Select(m => new Message(m))
+                .FirstOrDefault();
         }
 
         [HttpDelete("{id?}")]
@@ -44,7 +44,7 @@ namespace Rnwood.Smtp4dev.API
         {
             if (id.HasValue)
             {
-                ISmtp4devMessage message = _messageStore.Messages.FirstOrDefault(m => m.Id == id);
+                var message = _messageStore.Messages.FirstOrDefault(m => m.Id == id);
 
                 if (message != null)
                 {
@@ -64,7 +64,7 @@ namespace Rnwood.Smtp4dev.API
         {
             HttpContext.Response.ContentType = "text/event-stream";
 
-            AutoResetEvent messagesChangedEvent = new AutoResetEvent(false);
+            var messagesChangedEvent = new AutoResetEvent(false);
 
             _messageStore.MessageAdded += (s, ea) =>
             {
@@ -81,6 +81,7 @@ namespace Rnwood.Smtp4dev.API
                 await messagesChangedEvent.WaitOneAsync();
                 await HttpContext.Response.WriteAsync("event: messageschanged\ndata: messages changed!\n\n");
             }
+            // ReSharper disable once FunctionNeverReturns
         }
     }
 }

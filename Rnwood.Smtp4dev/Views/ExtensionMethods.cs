@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Rnwood.Smtp4dev.UI
+namespace Rnwood.Smtp4dev.Views
 {
     public static class ExtensionMethods
     {

@@ -13,11 +13,11 @@
         /// <summary>
         /// Use the standard IANA SMTP port - 25
         /// </summary>
-        SMTP = 25,
+        Smtp = 25,
 
         /// <summary>
         /// Use the standard IANA SMTP-over-SSL port - 465
         /// </summary>
-        SMTPOverSSL = 465
+        SmtpOverSsl = 465
     }
 }

@@ -8,8 +8,8 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void Command()
         {
-            SmtpCommand command = new SmtpCommand("BLAH");
-            CommandEventArgs args = new CommandEventArgs(command);
+            var command = new SmtpCommand("BLAH");
+            var args = new CommandEventArgs(command);
 
             Assert.Same(command, args.Command);
         }

@@ -1,27 +1,27 @@
 ﻿requirejs.config({
-    baseUrl: '/lib',
+    baseUrl: "/lib",
     paths: {
-        'bootstrap': 'bootstrap/dist/js/bootstrap.min',
-        'jquery': 'jquery/dist/jquery.min',
-        'text': 'text/text',
-        'knockout': 'knockoutjs/dist/knockout',
-        'moment': 'moment/min/moment-with-locales',
-        'toastr': 'toastr/toastr',
+        'bootstrap': "bootstrap/dist/js/bootstrap.min",
+        'jquery': "jquery/dist/jquery.min",
+        'text': "text/text",
+        'knockout': "knockoutjs/dist/knockout",
+        'moment': "moment/min/moment-with-locales",
+        'toastr': "toastr/toastr",
         'api': "/js/api",
-        'crossroads': 'crossroads.js/dist/crossroads',
-        'hasher': 'hasher/dist/js/hasher',
-        'signals': 'js-signals/dist/signals',
-        'js-data': 'js-data/dist/js-data',
-        'js-data-http': 'js-data-http/dist/js-data-http',
-        'es6promise': 'es6-promise/es6-promise'
+        'crossroads': "crossroads.js/dist/crossroads",
+        'hasher': "hasher/dist/js/hasher",
+        'signals': "js-signals/dist/signals",
+        'js-data': "js-data/dist/js-data",
+        'js-data-http': "js-data-http/dist/js-data-http",
+        'es6promise': "es6-promise/es6-promise"
     },
 
     shim: {
         'jquery': {
-            exports: 'jQuery'
+            exports: "jQuery"
         },
         'bootstrap': {
-            deps: ['jquery']
+            deps: ["jquery"]
         }
     }
 });
@@ -31,39 +31,39 @@ require(["bootstrap", "es6promise"], function (bootstrap, es6promise) {
 });
 
 require(["knockout"], function (ko) {
-    ko.components.register('messagelist', {
+    ko.components.register("messagelist", {
         require: "/components/messagelist.js"
     });
 
-    ko.components.register('messageinspect', {
+    ko.components.register("messageinspect", {
         require: "/components/messageinspect.js"
     });
 
-    ko.components.register('loading', {
+    ko.components.register("loading", {
         require: "/components/loading.js"
     });
 
-    ko.components.register('serverstatus', {
+    ko.components.register("serverstatus", {
         require: "/components/serverstatus.js"
     });
 
-    ko.components.register('messagesview', {
+    ko.components.register("messagesview", {
         require: "/views/messagesview.js"
     });
 
-    ko.components.register('sessionsview', {
+    ko.components.register("sessionsview", {
         require: "/views/sessionsview.js"
     });
 
-    ko.components.register('settingsview', {
+    ko.components.register("settingsview", {
         require: "/views/settingsview.js"
     });
 
-    ko.components.register('busy', {
+    ko.components.register("busy", {
         require: "/components/busy.js"
     });
 
-    ko.components.register('viewmessageview', {
+    ko.components.register("viewmessageview", {
         require: "/views/viewmessageview.js"
     });
 });

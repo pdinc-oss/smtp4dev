@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
 
 namespace Rnwood.SmtpServer
@@ -18,10 +16,10 @@ namespace Rnwood.SmtpServer
 
         private string[] ParseArguments(string argumentsText)
         {
-            int ltCount = 0;
-            List<string> arguments = new List<string>();
-            StringBuilder currentArgument = new StringBuilder();
-            foreach (char character in argumentsText)
+            var ltCount = 0;
+            var arguments = new List<string>();
+            var currentArgument = new StringBuilder();
+            foreach (var character in argumentsText)
             {
                 switch (character)
                 {

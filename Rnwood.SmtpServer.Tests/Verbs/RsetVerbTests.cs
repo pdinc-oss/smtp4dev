@@ -9,12 +9,12 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         [Fact]
         public async Task ProcessAsync()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
 
-            RsetVerb verb = new RsetVerb();
+            var verb = new RsetVerb();
             await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("RSET"));
 
-            mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
+            mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.Ok);
             mocks.Connection.Verify(c => c.AbortMessage());
         }
     }

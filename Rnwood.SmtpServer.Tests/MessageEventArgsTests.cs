@@ -9,7 +9,7 @@ namespace Rnwood.SmtpServer.Tests
         public void Message()
         {
             IMessage message = new MemoryMessage();
-            MessageEventArgs messageEventArgs = new MessageEventArgs(message);
+            var messageEventArgs = new MessageEventArgs(message);
 
             Assert.Same(message, messageEventArgs.Message);
         }

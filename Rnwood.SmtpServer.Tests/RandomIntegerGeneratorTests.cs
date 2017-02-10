@@ -8,8 +8,8 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void GenerateRandomInteger()
         {
-            RandomIntegerGenerator randomNumberGenerator = new RandomIntegerGenerator();
-            int randomNumber = randomNumberGenerator.GenerateRandomInteger(-100, 100);
+            var randomNumberGenerator = new RandomIntegerGenerator();
+            var randomNumber = randomNumberGenerator.GenerateRandomInteger(-100, 100);
             Assert.True(randomNumber >= -100);
             Assert.True(randomNumber <= 100);
         }

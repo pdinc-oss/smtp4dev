@@ -7,7 +7,7 @@ namespace Rnwood.SmtpServer.Verbs
         public async Task ProcessAsync(IConnection connection, SmtpCommand command)
         {
             connection.AbortMessage();
-            await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.OK, "Rset completed"));
+            await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.Ok, "Rset completed"));
         }
     }
 }

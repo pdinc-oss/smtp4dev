@@ -22,7 +22,7 @@ namespace Rnwood.SmtpServer
 
         public override void AppendToLog(string text)
         {
-            using (StreamWriter writer = _file.AppendText())
+            using (var writer = _file.AppendText())
             {
                 writer.WriteLine(text);
             }

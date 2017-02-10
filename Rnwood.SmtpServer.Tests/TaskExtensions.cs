@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Rnwood.SmtpServer.Tests
@@ -14,7 +12,7 @@ namespace Rnwood.SmtpServer.Tests
 
         public static async Task WithTimeout(this Task task, int seconds, string descriptionOfTask)
         {
-            Task completedTask = await Task.WhenAny(task, Task.Delay(seconds * 1000));
+            var completedTask = await Task.WhenAny(task, Task.Delay(seconds * 1000));
 
             if (completedTask != task)
             {

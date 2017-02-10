@@ -11,10 +11,10 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public async Task Process_GreetingWritten()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
             mocks.ConnectionChannel.Setup(c => c.WriteLineAsync(It.IsAny<string>())).Callback(() => mocks.Connection.Object.CloseConnectionAsync().Wait());
 
-            Connection connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
+            var connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
             await connection.ProcessAsync();
 
             mocks.ConnectionChannel.Verify(cc => cc.WriteLineAsync(It.IsRegex("220 .*", RegexOptions.IgnoreCase)));
@@ -23,14 +23,14 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public async Task Process_SmtpServerExceptionThrow_ResponseWritten()
         {
-            Mocks mocks = new Mocks();
-            Mock<IVerb> mockVerb = new Mock<IVerb>();
+            var mocks = new Mocks();
+            var mockVerb = new Mock<IVerb>();
             mocks.VerbMap.Setup(v => v.GetVerbProcessor(It.IsAny<string>())).Returns(mockVerb.Object);
             mockVerb.Setup(v => v.ProcessAsync(It.IsAny<IConnection>(), It.IsAny<SmtpCommand>())).Returns(Task.FromException(new SmtpServerException(new SmtpResponse(500, "error"))));
 
             mocks.ConnectionChannel.Setup(c => c.ReadLineAsync()).ReturnsAsync("GOODCOMMAND").Callback(() => mocks.Connection.Object.CloseConnectionAsync().Wait());
 
-            Connection connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
+            var connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
             await connection.ProcessAsync();
 
             mocks.ConnectionChannel.Verify(cc => cc.WriteLineAsync(It.IsRegex("500 error", RegexOptions.IgnoreCase)));
@@ -39,11 +39,11 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public async Task Process_EmptyCommand_NoResponse()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
 
             mocks.ConnectionChannel.Setup(c => c.ReadLineAsync()).ReturnsAsync("").Callback(() => mocks.Connection.Object.CloseConnectionAsync().Wait());
 
-            Connection connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
+            var connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
             await connection.ProcessAsync();
 
             //Should only print service ready message
@@ -53,13 +53,13 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public async Task Process_GoodCommand_Processed()
         {
-            Mocks mocks = new Mocks();
-            Mock<IVerb> mockVerb = new Mock<IVerb>();
+            var mocks = new Mocks();
+            var mockVerb = new Mock<IVerb>();
             mocks.VerbMap.Setup(v => v.GetVerbProcessor(It.IsAny<string>())).Returns(mockVerb.Object).Callback(() => mocks.Connection.Object.CloseConnectionAsync().Wait());
 
             mocks.ConnectionChannel.Setup(c => c.ReadLineAsync()).ReturnsAsync("GOODCOMMAND");
 
-            Connection connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
+            var connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
             await connection.ProcessAsync();
 
             mockVerb.Verify(v => v.ProcessAsync(It.IsAny<IConnection>(), It.IsAny<SmtpCommand>()));
@@ -68,10 +68,10 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public async Task Process_BadCommand_500Response()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
             mocks.ConnectionChannel.Setup(c => c.ReadLineAsync()).ReturnsAsync("BADCOMMAND").Callback(() => mocks.Connection.Object.CloseConnectionAsync().Wait());
 
-            Connection connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
+            var connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
             await connection.ProcessAsync();
 
             mocks.ConnectionChannel.Verify(cc => cc.WriteLineAsync(It.IsRegex("500 .*", RegexOptions.IgnoreCase)));
@@ -80,12 +80,12 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public async Task Process_TooManyBadCommands_Disconnected()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
             mocks.ServerBehaviour.SetupGet(b => b.MaximumNumberOfSequentialBadCommands).Returns(2);
 
             mocks.ConnectionChannel.Setup(c => c.ReadLineAsync()).ReturnsAsync("BADCOMMAND");
 
-            Connection connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
+            var connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
             await connection.ProcessAsync();
 
             mocks.ConnectionChannel.Verify(c => c.ReadLineAsync(), Times.Exactly(2));
@@ -95,9 +95,9 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void AbortMessage()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
 
-            Connection connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
+            var connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
             connection.NewMessage();
 
             connection.AbortMessage();
@@ -107,11 +107,11 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void CommitMessage()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
 
-            Connection connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
-            IMessageBuilder messageBuilder = connection.NewMessage();
-            IMessage message = messageBuilder.ToMessage();
+            var connection = new Connection(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object);
+            var messageBuilder = connection.NewMessage();
+            var message = messageBuilder.ToMessage();
 
             connection.CommitMessage();
             mocks.Session.Verify(s => s.AddMessage(message));

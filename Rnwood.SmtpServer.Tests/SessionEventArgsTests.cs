@@ -8,9 +8,9 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void Session()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
 
-            SessionEventArgs s = new SessionEventArgs(mocks.Session.Object);
+            var s = new SessionEventArgs(mocks.Session.Object);
 
             Assert.Equal(s.Session, mocks.Session.Object);
         }

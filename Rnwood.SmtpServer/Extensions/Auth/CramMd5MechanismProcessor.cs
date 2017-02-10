@@ -25,11 +25,11 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 
         #region IAuthMechanismProcessor Members
 
-        public async override Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
+        public override async Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
         {
             if (_challenge == null)
             {
-                StringBuilder challenge = new StringBuilder();
+                var challenge = new StringBuilder();
                 challenge.Append(_random.GenerateRandomInteger(0, Int16.MaxValue));
                 challenge.Append(".");
                 challenge.Append(_dateTimeProvider.GetCurrentDateTime().Ticks.ToString());
@@ -37,15 +37,15 @@ namespace Rnwood.SmtpServer.Extensions.Auth
                 challenge.Append(Connection.Server.Behaviour.DomainName);
                 _challenge = challenge.ToString();
 
-                string base64Challenge = Convert.ToBase64String(Encoding.ASCII.GetBytes(challenge.ToString()));
+                var base64Challenge = Convert.ToBase64String(Encoding.ASCII.GetBytes(challenge.ToString()));
                 await Connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.AuthenticationContinue,
                                                           base64Challenge));
                 return AuthMechanismProcessorStatus.Continue;
             }
             else
             {
-                string response = DecodeBase64(data);
-                string[] responseparts = response.Split(' ');
+                var response = DecodeBase64(data);
+                var responseparts = response.Split(' ');
 
                 if (responseparts.Length != 2)
                 {
@@ -53,12 +53,12 @@ namespace Rnwood.SmtpServer.Extensions.Auth
                                                                    "Response in incorrect format - should be USERNAME RESPONSE"));
                 }
 
-                string username = responseparts[0];
-                string hash = responseparts[1];
+                var username = responseparts[0];
+                var hash = responseparts[1];
 
                 Credentials = new CramMd5AuthenticationCredentials(username, _challenge, hash);
 
-                AuthenticationResult result =
+                var result =
                     await Connection.Server.Behaviour.ValidateAuthenticationCredentialsAsync(Connection, Credentials);
 
                 switch (result)

@@ -20,11 +20,11 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 
         public AuthMechanismMap MechanismMap { get; private set; }
 
-        public string[] EHLOKeywords
+        public string[] EhloKeywords
         {
             get
             {
-                IEnumerable<IAuthMechanism> mechanisms = MechanismMap.GetAll();
+                var mechanisms = MechanismMap.GetAll();
 
                 if (mechanisms.Any())
                 {

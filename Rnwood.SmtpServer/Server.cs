@@ -17,7 +17,7 @@ namespace Rnwood.SmtpServer
 {
     public class Server : IServer
     {
-        private ILogger _logger = Logging.Factory.CreateLogger<Server>();
+        private readonly ILogger _logger = Logging.Factory.CreateLogger<Server>();
         private TcpListener _listener;
 
         public Server(IServerBehaviour behaviour)
@@ -47,17 +47,11 @@ namespace Rnwood.SmtpServer
 
         public event EventHandler IsRunningChanged;
 
-        public int PortNumber
-        {
-            get
-            {
-                return ((IPEndPoint)_listener.LocalEndpoint).Port;
-            }
-        }
+        public int PortNumber => ((IPEndPoint)_listener.LocalEndpoint).Port;
 
         private IVerbMap GetVerbMap()
         {
-            VerbMap verbMap = new VerbMap();
+            var verbMap = new VerbMap();
             verbMap.SetVerbProcessor("HELO", new HeloVerb());
             verbMap.SetVerbProcessor("EHLO", new EhloVerb());
             verbMap.SetVerbProcessor("QUIT", new QuitVerb());
@@ -110,7 +104,7 @@ namespace Rnwood.SmtpServer
             {
                 _logger.LogDebug("New connection from {0}", tcpClient.Client.RemoteEndPoint);
 
-                Connection connection = new Connection(this, new TcpClientConnectionChannel(tcpClient), GetVerbMap());
+                var connection = new Connection(this, new TcpClientConnectionChannel(tcpClient), GetVerbMap());
                 _activeConnections.Add(connection);
                 connection.ConnectionClosed += (s, ea) =>
                 {
@@ -193,8 +187,8 @@ namespace Rnwood.SmtpServer
         {
             _logger.LogDebug("Killing client connections");
 
-            List<Task> killTasks = new List<Task>();
-            foreach (Connection connection in _activeConnections.Cast<Connection>().ToArray())
+            var killTasks = new List<Task>();
+            foreach (var connection in _activeConnections.Cast<Connection>().ToArray())
             {
                 _logger.LogDebug("Killing connection {0}", connection);
                 killTasks.Add(connection.CloseConnectionAsync());
@@ -204,30 +198,24 @@ namespace Rnwood.SmtpServer
 
         private readonly IList _activeConnections = ArrayList.Synchronized(new List<Connection>());
 
-        public IEnumerable<IConnection> ActiveConnections
-        {
-            get
-            {
-                return _activeConnections.Cast<IConnection>();
-            }
-        }
+        public IEnumerable<IConnection> ActiveConnections => _activeConnections.Cast<IConnection>();
 
         private Task _coreTask;
 
         #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
-        private AutoResetEvent _nextConnectionEvent = new AutoResetEvent(false);
+        private bool _disposedValue = false; // To detect redundant calls
+        private readonly AutoResetEvent _nextConnectionEvent = new AutoResetEvent(false);
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
                     Stop();
                 }
 
-                disposedValue = true;
+                _disposedValue = true;
             }
         }
 

@@ -11,12 +11,12 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
         [Fact]
         public async Task ProcessRepsonse_GetChallenge()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
 
-            CramMd5MechanismProcessor cramMd5MechanismProcessor = Setup(mocks);
-            AuthMechanismProcessorStatus result = await cramMd5MechanismProcessor.ProcessResponseAsync(null);
+            var cramMd5MechanismProcessor = Setup(mocks);
+            var result = await cramMd5MechanismProcessor.ProcessResponseAsync(null);
 
-            string expectedResponse = string.Format("{0}.{1}@{2}", FAKERANDOM, FAKEDATETIME, FAKEDOMAIN);
+            var expectedResponse = string.Format("{0}.{1}@{2}", Fakerandom, Fakedatetime, Fakedomain);
 
             Assert.Equal(AuthMechanismProcessorStatus.Continue, result);
             mocks.Connection.Verify(
@@ -34,12 +34,12 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
         {
             await Assert.ThrowsAsync<SmtpServerException>(async () =>
             {
-                Mocks mocks = new Mocks();
+                var mocks = new Mocks();
 
-                string challenge = string.Format("{0}.{1}@{2}", FAKERANDOM, FAKEDATETIME, FAKEDOMAIN);
+                var challenge = string.Format("{0}.{1}@{2}", Fakerandom, Fakedatetime, Fakedomain);
 
-                CramMd5MechanismProcessor cramMd5MechanismProcessor = Setup(mocks, challenge);
-                AuthMechanismProcessorStatus result = await cramMd5MechanismProcessor.ProcessResponseAsync("BLAH");
+                var cramMd5MechanismProcessor = Setup(mocks, challenge);
+                var result = await cramMd5MechanismProcessor.ProcessResponseAsync("BLAH");
             });
         }
 
@@ -48,27 +48,27 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
         {
             await Assert.ThrowsAsync<BadBase64Exception>(async () =>
             {
-                Mocks mocks = new Mocks();
+                var mocks = new Mocks();
 
-                CramMd5MechanismProcessor cramMd5MechanismProcessor = Setup(mocks);
+                var cramMd5MechanismProcessor = Setup(mocks);
                 await cramMd5MechanismProcessor.ProcessResponseAsync(null);
                 await cramMd5MechanismProcessor.ProcessResponseAsync("rob blah");
             });
         }
 
-        private const int FAKEDATETIME = 10000;
-        private const int FAKERANDOM = 1234;
-        private const string FAKEDOMAIN = "mockdomain";
+        private const int Fakedatetime = 10000;
+        private const int Fakerandom = 1234;
+        private const string Fakedomain = "mockdomain";
 
         private CramMd5MechanismProcessor Setup(Mocks mocks, string challenge = null)
         {
-            Mock<IRandomIntegerGenerator> randomMock = new Mock<IRandomIntegerGenerator>();
-            randomMock.Setup(r => r.GenerateRandomInteger(It.IsAny<int>(), It.IsAny<int>())).Returns(FAKERANDOM);
+            var randomMock = new Mock<IRandomIntegerGenerator>();
+            randomMock.Setup(r => r.GenerateRandomInteger(It.IsAny<int>(), It.IsAny<int>())).Returns(Fakerandom);
 
-            Mock<ICurrentDateTimeProvider> dateMock = new Mock<ICurrentDateTimeProvider>();
-            dateMock.Setup(d => d.GetCurrentDateTime()).Returns(new DateTime(FAKEDATETIME));
+            var dateMock = new Mock<ICurrentDateTimeProvider>();
+            dateMock.Setup(d => d.GetCurrentDateTime()).Returns(new DateTime(Fakedatetime));
 
-            mocks.ServerBehaviour.SetupGet(b => b.DomainName).Returns(FAKEDOMAIN);
+            mocks.ServerBehaviour.SetupGet(b => b.DomainName).Returns(Fakedomain);
 
             return new CramMd5MechanismProcessor(mocks.Connection.Object, randomMock.Object, dateMock.Object, challenge);
         }

@@ -1,11 +1,10 @@
 ﻿#region
 
-using Rnwood.SmtpServer.Verbs;
 using System.Threading.Tasks;
 
 #endregion
 
-namespace Rnwood.SmtpServer
+namespace Rnwood.SmtpServer.Verbs
 {
     public class HeloVerb : IVerb
     {
@@ -19,7 +18,7 @@ namespace Rnwood.SmtpServer
             }
 
             connection.Session.ClientName = command.ArgumentsText ?? "";
-            await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.OK, "Nice to meet you"));
+            await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.Ok, "Nice to meet you"));
         }
     }
 }

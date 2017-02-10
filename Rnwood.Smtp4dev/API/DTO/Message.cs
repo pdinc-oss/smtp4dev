@@ -1,44 +1,42 @@
-﻿using MimeKit;
+﻿using System;
+using MimeKit;
 using Rnwood.Smtp4dev.Model;
-using Rnwood.SmtpServer;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Rnwood.Smtp4dev.Controllers.API.DTO
+namespace Rnwood.Smtp4dev.API.DTO
 {
     public class Message
     {
-        private ISmtp4devMessage _message;
+        private readonly ISmtp4DevMessage _message;
 
-        public Message(ISmtp4devMessage message)
+        public Message(ISmtp4DevMessage message)
         {
             _message = message;
 
-            using (Stream messageData = message.GetData())
+            using (var messageData = message.GetData())
             {
                 try
                 {
-                    MimeMessage mimeMessage = MimeMessage.Load(messageData);
-                    subject = mimeMessage.Subject;
+                    var mimeMessage = MimeMessage.Load(messageData);
+                    Subject = mimeMessage.Subject;
+                    Body = mimeMessage.HtmlBody ?? string.Empty;
                 }
                 catch (FormatException)
                 {
-                    subject = "";
+                    Subject = "";
                 }
             }
         }
 
-        public DateTime receivedDate { get { return _message.ReceivedDate; } }
+        public DateTime ReceivedDate => _message.ReceivedDate;
 
-        public string from { get { return _message.From; } }
+        public string From => _message.From;
 
-        public string[] to { get { return _message.To; } }
+        public string[] To => _message.To;
 
-        public string subject { get; private set; }
+        public string Subject { get; private set; }
 
-        public Guid id { get { return _message.Id; } }
+        public Guid Id => _message.Id;
+
+        public string Body { get; set; }
     }
 }

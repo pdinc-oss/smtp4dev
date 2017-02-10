@@ -11,52 +11,28 @@ using System.Threading.Tasks;
 
 namespace Rnwood.Smtp4dev.Model
 {
-    internal class Smtp4devServerBehaviour : IServerBehaviour
+    internal class Smtp4DevServerBehaviour : IServerBehaviour
     {
-        internal Smtp4devServerBehaviour(Settings settings, Action<ISmtp4devMessage> messageRecievedHandler)
+        internal Smtp4DevServerBehaviour(Settings settings, Action<ISmtp4DevMessage> messageRecievedHandler)
         {
             _settings = settings;
             _messageReceivedHandler = messageRecievedHandler;
         }
 
-        private Action<ISmtp4devMessage> _messageReceivedHandler;
-        private Settings _settings;
+        private readonly Action<ISmtp4DevMessage> _messageReceivedHandler;
+        private readonly Settings _settings;
 
-        public string DomainName
-        {
-            get
-            {
-                return "smtp4dev";
-            }
-        }
+        public string DomainName => "smtp4dev";
 
-        public IPAddress IpAddress
-        {
-            get
-            {
-                return IPAddress.Any;
-            }
-        }
+        public IPAddress IpAddress => IPAddress.Any;
 
-        public int MaximumNumberOfSequentialBadCommands
-        {
-            get
-            {
-                return 10;
-            }
-        }
+        public int MaximumNumberOfSequentialBadCommands => 10;
 
-        public int PortNumber
-        {
-            get
-            {
-                return _settings.Port;
-            }
-        }
+        public int PortNumber => _settings.Port;
 
         public Encoding GetDefaultEncoding(IConnection connection)
         {
-            return new ASCIISevenBitTruncatingEncoding();
+            return new AsciiSevenBitTruncatingEncoding();
         }
 
         public IEnumerable<IExtension> GetExtensions(IConnection connection)
@@ -79,7 +55,7 @@ namespace Rnwood.Smtp4dev.Model
             return TimeSpan.FromMinutes(5);
         }
 
-        public X509Certificate GetSSLCertificate(IConnection connection)
+        public X509Certificate GetSslCertificate(IConnection connection)
         {
             return null;
         }
@@ -94,7 +70,7 @@ namespace Rnwood.Smtp4dev.Model
             return true;
         }
 
-        public bool IsSSLEnabled(IConnection connection)
+        public bool IsSslEnabled(IConnection connection)
         {
             return false;
         }
@@ -105,7 +81,7 @@ namespace Rnwood.Smtp4dev.Model
 
         public IMessageBuilder OnCreateNewMessage(IConnection connection)
         {
-            return new Smtp4devMessage.Builder();
+            return new Smtp4DevMessage.Builder();
         }
 
         public IEditableSession OnCreateNewSession(IConnection connection, IPAddress clientAddress, DateTime startDate)
@@ -119,7 +95,7 @@ namespace Rnwood.Smtp4dev.Model
 
         public void OnMessageReceived(IConnection connection, IMessage message)
         {
-            _messageReceivedHandler((ISmtp4devMessage)message);
+            _messageReceivedHandler((ISmtp4DevMessage)message);
         }
 
         public void OnMessageRecipientAdding(IConnection connection, IMessageBuilder message, string recipient)
@@ -130,7 +106,7 @@ namespace Rnwood.Smtp4dev.Model
         {
         }
 
-        public void OnSessionCompleted(IConnection connection, ISession Session)
+        public void OnSessionCompleted(IConnection connection, ISession session)
         {
         }
 

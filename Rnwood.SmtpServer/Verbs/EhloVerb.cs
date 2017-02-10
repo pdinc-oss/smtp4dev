@@ -1,13 +1,12 @@
 ﻿#region
 
-using Rnwood.SmtpServer.Verbs;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 #endregion
 
-namespace Rnwood.SmtpServer
+namespace Rnwood.SmtpServer.Verbs
 {
     public class EhloVerb : IVerb
     {
@@ -22,15 +21,15 @@ namespace Rnwood.SmtpServer
 
             connection.Session.ClientName = command.ArgumentsText ?? "";
 
-            StringBuilder text = new StringBuilder();
+            var text = new StringBuilder();
             text.AppendLine("Nice to meet you.");
 
-            foreach (string extnName in connection.ExtensionProcessors.SelectMany(extn => extn.EHLOKeywords))
+            foreach (var extnName in connection.ExtensionProcessors.SelectMany(extn => extn.EhloKeywords))
             {
                 text.AppendLine(extnName);
             }
 
-            await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.OK, text.ToString().TrimEnd()));
+            await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.Ok, text.ToString().TrimEnd()));
         }
     }
 }

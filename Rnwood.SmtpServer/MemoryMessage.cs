@@ -27,12 +27,9 @@ namespace Rnwood.SmtpServer
             get; private set;
         }
 
-        private List<string> _to = new List<string>();
+        private readonly List<string> _to = new List<string>();
 
-        public string[] To
-        {
-            get { return _to.ToArray(); }
-        }
+        public string[] To => _to.ToArray();
 
         public bool SecureConnection
         {
@@ -69,11 +66,11 @@ namespace Rnwood.SmtpServer
                 _message = message;
             }
 
-            private MemoryMessage _message;
+            private readonly MemoryMessage _message;
 
             public Stream WriteData()
             {
-                CloseNotifyingMemoryStream stream = new CloseNotifyingMemoryStream();
+                var stream = new CloseNotifyingMemoryStream();
                 stream.Closing += (s, ea) =>
                 {
                     _message.Data = stream.ToArray();
@@ -178,13 +175,7 @@ namespace Rnwood.SmtpServer
                 }
             }
 
-            public ICollection<string> To
-            {
-                get
-                {
-                    return _message._to;
-                }
-            }
+            public ICollection<string> To => _message._to;
 
             public virtual IMessage ToMessage()
             {

@@ -8,20 +8,14 @@ namespace Rnwood.SmtpServer.Extensions.Auth
     {
         #region IAuthMechanism Members
 
-        public string Identifier
-        {
-            get { return "PLAIN"; }
-        }
+        public string Identifier => "PLAIN";
 
         public IAuthMechanismProcessor CreateAuthMechanismProcessor(IConnection connection)
         {
             return new PlainMechanismProcessor(connection);
         }
 
-        public bool IsPlainText
-        {
-            get { return true; }
-        }
+        public bool IsPlainText => true;
 
         #endregion
     }

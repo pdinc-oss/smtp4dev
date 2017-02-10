@@ -1,11 +1,10 @@
 ﻿#region
 
-using Rnwood.SmtpServer.Verbs;
 using System.Threading.Tasks;
 
 #endregion
 
-namespace Rnwood.SmtpServer
+namespace Rnwood.SmtpServer.Verbs
 {
     public class RcptVerb : IVerb
     {
@@ -19,8 +18,8 @@ namespace Rnwood.SmtpServer
 
         public async Task ProcessAsync(IConnection connection, SmtpCommand command)
         {
-            SmtpCommand subrequest = new SmtpCommand(command.ArgumentsText);
-            IVerb verbProcessor = SubVerbMap.GetVerbProcessor(subrequest.Verb);
+            var subrequest = new SmtpCommand(command.ArgumentsText);
+            var verbProcessor = SubVerbMap.GetVerbProcessor(subrequest.Verb);
 
             if (verbProcessor != null)
             {

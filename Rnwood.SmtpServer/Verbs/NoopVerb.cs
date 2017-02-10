@@ -6,7 +6,7 @@ namespace Rnwood.SmtpServer.Verbs
     {
         public async Task ProcessAsync(IConnection connection, SmtpCommand command)
         {
-            await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.OK, "Successfully did nothing"));
+            await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.Ok, "Successfully did nothing"));
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿#region
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 
 #endregion
@@ -11,7 +9,7 @@ namespace Rnwood.SmtpServer
 {
     public class SmtpCommand : IEquatable<SmtpCommand>
     {
-        public static Regex COMMANDREGEX = new Regex("(?'verb'[^ :]+)[ :]*(?'arguments'.*)");
+        public static Regex Commandregex = new Regex("(?'verb'[^ :]+)[ :]*(?'arguments'.*)");
 
         public SmtpCommand(string text)
         {
@@ -22,7 +20,7 @@ namespace Rnwood.SmtpServer
 
             if (!string.IsNullOrEmpty(text))
             {
-                Match match = COMMANDREGEX.Match(text);
+                var match = Commandregex.Match(text);
 
                 if (match.Success)
                 {

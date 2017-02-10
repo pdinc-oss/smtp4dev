@@ -21,8 +21,8 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 
         public bool ValidateResponse(string password)
         {
-            HMACMD5 hmacmd5 = new HMACMD5(ASCIIEncoding.ASCII.GetBytes(password));
-            string expectedResponse = BitConverter.ToString(hmacmd5.ComputeHash(ASCIIEncoding.ASCII.GetBytes(Challenge))).Replace("-", "");
+            var hmacmd5 = new HMACMD5(ASCIIEncoding.ASCII.GetBytes(password));
+            var expectedResponse = BitConverter.ToString(hmacmd5.ComputeHash(ASCIIEncoding.ASCII.GetBytes(Challenge))).Replace("-", "");
 
             return string.Equals(expectedResponse, ChallengeResponse, StringComparison.OrdinalIgnoreCase);
         }

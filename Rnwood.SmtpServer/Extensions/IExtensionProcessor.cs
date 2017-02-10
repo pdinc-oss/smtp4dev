@@ -2,7 +2,7 @@
 {
     public interface IExtensionProcessor
     {
-        string[] EHLOKeywords
+        string[] EhloKeywords
         {
             get;
         }

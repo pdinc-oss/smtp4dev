@@ -20,11 +20,13 @@
                 var self = this;
                 $.extend(self, data);
 
-                self.receivedDateString = moment(data.ReceivedDate).format('L LT');
+                self.receivedDateString = moment(data.ReceivedDate).format("L LT");
 
                 self.view = function () {
                     window.location.hash = "/message/" + self.id;
                 };
+
+                self.body = data.body;
 
                 self.deleteMessage = function () {
                     api.Message.destroy(self.id).then(

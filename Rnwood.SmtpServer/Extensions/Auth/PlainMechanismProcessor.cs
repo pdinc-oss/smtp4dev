@@ -22,7 +22,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 
         #region IAuthMechanismProcessor Members
 
-        public async override Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
+        public override async Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
         {
             if (string.IsNullOrEmpty(data))
             {
@@ -37,8 +37,8 @@ namespace Rnwood.SmtpServer.Extensions.Auth
                 return AuthMechanismProcessorStatus.Continue;
             }
 
-            string decodedData = DecodeBase64(data);
-            string[] decodedDataParts = decodedData.Split('\0');
+            var decodedData = DecodeBase64(data);
+            var decodedDataParts = decodedData.Split('\0');
 
             if (decodedDataParts.Length != 3)
             {
@@ -46,12 +46,12 @@ namespace Rnwood.SmtpServer.Extensions.Auth
                                                                "Auth data in incorrect format"));
             }
 
-            string username = decodedDataParts[1];
-            string password = decodedDataParts[2];
+            var username = decodedDataParts[1];
+            var password = decodedDataParts[2];
 
             Credentials = new PlainAuthenticationCredentials(username, password);
 
-            AuthenticationResult result =
+            var result =
                 await Connection.Server.Behaviour.ValidateAuthenticationCredentialsAsync(Connection, Credentials);
             switch (result)
             {

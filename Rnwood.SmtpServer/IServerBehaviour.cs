@@ -39,7 +39,7 @@ namespace Rnwood.SmtpServer
         /// Gets a value indicating whether to run in SSL mode.
         /// </summary>
         /// <value><c>true</c> if the server should run in SSL mode otherwise, <c>false</c>.</value>
-        bool IsSSLEnabled(IConnection connection);
+        bool IsSslEnabled(IConnection connection);
 
         void OnMessageReceived(IConnection connection, IMessage message);
 
@@ -57,7 +57,7 @@ namespace Rnwood.SmtpServer
         /// </summary>
         /// <param name="connection">The connection.</param>
         /// <returns></returns>
-        X509Certificate GetSSLCertificate(IConnection connection);
+        X509Certificate GetSslCertificate(IConnection connection);
 
         bool IsSessionLoggingEnabled(IConnection connection);
 
@@ -72,8 +72,8 @@ namespace Rnwood.SmtpServer
         /// Called when a SMTP session is completed.
         /// </summary>
         /// <param name="connection">The connection.</param>
-        /// <param name="Session">The session.</param>
-        void OnSessionCompleted(IConnection connection, ISession Session);
+        /// <param name="session">The session.</param>
+        void OnSessionCompleted(IConnection connection, ISession session);
 
         /// <summary>
         /// Called when a new SMTP session is started.

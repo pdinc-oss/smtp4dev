@@ -9,14 +9,14 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
         [Fact]
         public void ValidateResponse_Valid()
         {
-            CramMd5AuthenticationCredentials authenticationCredentials = new CramMd5AuthenticationCredentials("username", "challenge", "b26eafe32c337296f7870c68edd5e8a5");
+            var authenticationCredentials = new CramMd5AuthenticationCredentials("username", "challenge", "b26eafe32c337296f7870c68edd5e8a5");
             Assert.True(authenticationCredentials.ValidateResponse("password"));
         }
 
         [Fact]
         public void ValidateResponse_Invalid()
         {
-            CramMd5AuthenticationCredentials authenticationCredentials = new CramMd5AuthenticationCredentials("username", "challenge", "b26eafe32c337296f7870c68edd5e8a5");
+            var authenticationCredentials = new CramMd5AuthenticationCredentials("username", "challenge", "b26eafe32c337296f7870c68edd5e8a5");
             Assert.False(authenticationCredentials.ValidateResponse("password2"));
         }
     }

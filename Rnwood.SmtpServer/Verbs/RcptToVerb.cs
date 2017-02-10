@@ -1,12 +1,11 @@
 ﻿#region
 
-using Rnwood.SmtpServer.Verbs;
 using System.Linq;
 using System.Threading.Tasks;
 
 #endregion
 
-namespace Rnwood.SmtpServer
+namespace Rnwood.SmtpServer.Verbs
 {
     public class RcptToVerb : IVerb
     {
@@ -28,10 +27,10 @@ namespace Rnwood.SmtpServer
                 return;
             }
 
-            string address = command.ArgumentsText.Remove(0, 1).Remove(command.ArgumentsText.Length - 2);
+            var address = command.ArgumentsText.Remove(0, 1).Remove(command.ArgumentsText.Length - 2);
             connection.Server.Behaviour.OnMessageRecipientAdding(connection, connection.CurrentMessage, address);
             connection.CurrentMessage.To.Add(address);
-            await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.OK, "Recipient accepted"));
+            await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.Ok, "Recipient accepted"));
         }
     }
 }

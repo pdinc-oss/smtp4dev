@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Rnwood.Smtp4dev.Model
+﻿namespace Rnwood.Smtp4dev.Model
 {
     public class Settings
     {
         public Settings()
         {
-            Port = 25;
+            Port = 5151;
             IsEnabled = true;
         }
 

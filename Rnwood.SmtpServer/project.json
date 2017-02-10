@@ -8,28 +8,17 @@
     "projectUrl": "http://github.com/rnwood/smtp4dev"
   },
   "buildOptions": {
-    "emitEntryPoint": false,
-    "compile": {
-      "exclude": [
-      ]
-    }
+    "emitEntryPoint": false
   },
-
-  "dependencies": {
-    "Microsoft.Extensions.Logging": "1.0.0",
-    "Microsoft.Extensions.Logging.Abstractions": "1.0.0",
-    "System.Collections.NonGeneric": "4.0.1",
-    "System.Net.Security": "4.0.0",
-    "NETStandard.Library": "1.6.0"
-  },
-
-  "commands": {
-  },
-
   "frameworks": {
     "netstandard1.6": {
-    },
-    "net461": {
+      "dependencies": {
+        "Microsoft.Extensions.Logging": "1.1.0",
+        "Microsoft.Extensions.Logging.Abstractions": "1.1.0",
+        "System.Collections.NonGeneric": "4.3.0",
+        "System.Net.Security": "4.3.0",
+        "NETStandard.Library": "1.6.1"
+      }
     }
   }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Rnwood.SmtpServer.Verbs;
 using Xunit;
 
 namespace Rnwood.SmtpServer.Tests.Verbs
@@ -8,22 +9,22 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         [Fact]
         public async Task SayHelo()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
 
-            HeloVerb verb = new HeloVerb();
+            var verb = new HeloVerb();
             await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("HELO foo.blah"));
 
-            mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
+            mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.Ok);
             mocks.Session.VerifySet(s => s.ClientName = "foo.blah");
         }
 
         [Fact]
         public async Task SayHeloTwice_ReturnsError()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
             mocks.Session.SetupGet(s => s.ClientName).Returns("already.said.helo");
 
-            HeloVerb verb = new HeloVerb();
+            var verb = new HeloVerb();
             await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("HELO foo.blah"));
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.BadSequenceOfCommands);
@@ -32,12 +33,12 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         [Fact]
         public async Task SayHelo_NoName()
         {
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
 
-            HeloVerb verb = new HeloVerb();
+            var verb = new HeloVerb();
             await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("HELO"));
 
-            mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
+            mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.Ok);
             mocks.Session.VerifySet(s => s.ClientName = "");
         }
     }

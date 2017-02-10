@@ -1,12 +1,9 @@
 ﻿#region
 
-using System;
 using System.Linq;
 using System.Net.Sockets;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
 
 #endregion
 
@@ -16,7 +13,7 @@ namespace Rnwood.SmtpServer.Tests
     {
         private Server StartServer()
         {
-            Server server = NewServer();
+            var server = NewServer();
             server.Start();
             return server;
         }
@@ -29,7 +26,7 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void Start_IsRunning()
         {
-            using (Server server = StartServer())
+            using (var server = StartServer())
             {
                 Assert.True(server.IsRunning);
             }
@@ -55,7 +52,7 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public void Stop_NotRunning()
         {
-            using (Server server = StartServer())
+            using (var server = StartServer())
             {
                 server.Stop();
                 Assert.False(server.IsRunning);
@@ -65,12 +62,12 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public async Task Stop_CannotConnect()
         {
-            using (Server server = StartServer())
+            using (var server = StartServer())
             {
-                int portNumber = server.PortNumber;
+                var portNumber = server.PortNumber;
                 server.Stop();
 
-                TcpClient client = new TcpClient();
+                var client = new TcpClient();
                 await Assert.ThrowsAnyAsync<SocketException>(async () =>
                     await client.ConnectAsync("localhost", portNumber)
                 );
@@ -81,9 +78,9 @@ namespace Rnwood.SmtpServer.Tests
         public async Task Stop_KillConnectionsTrue_ConnectionsKilled()
         {
             {
-                Server server = StartServer();
+                var server = StartServer();
 
-                Task serverTask = Task.Run(async () =>
+                var serverTask = Task.Run(async () =>
                 {
                     await Task.Run(() => server.WaitForNextConnection()).WithTimeout("waiting for next server connection");
                     Assert.Equal(1, server.ActiveConnections.Count());
@@ -91,7 +88,7 @@ namespace Rnwood.SmtpServer.Tests
                     Assert.Equal(0, server.ActiveConnections.Count());
                 });
 
-                using (TcpClient client = new TcpClient())
+                using (var client = new TcpClient())
                 {
                     await client.ConnectAsync("localhost", server.PortNumber).WithTimeout("waiting for client to connect");
                     await serverTask.WithTimeout(30, "waiting for server task to complete");
@@ -102,9 +99,9 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public async Task Stop_KillConnectionFalse_ConnectionsNotKilled()
         {
-            Server server = StartServer();
+            var server = StartServer();
 
-            Task serverTask = Task.Run(async () =>
+            var serverTask = Task.Run(async () =>
             {
                 await Task.Run(() => server.WaitForNextConnection()).WithTimeout("waiting for next server connection");
                 Assert.Equal(1, server.ActiveConnections.Count());
@@ -116,7 +113,7 @@ namespace Rnwood.SmtpServer.Tests
                 Assert.Equal(0, server.ActiveConnections.Count());
             });
 
-            using (TcpClient client = new TcpClient())
+            using (var client = new TcpClient())
             {
                 await client.ConnectAsync("localhost", server.PortNumber).WithTimeout("waiting for client to connect");
                 await serverTask.WithTimeout(30, "waiting for server task to complete");
@@ -126,9 +123,9 @@ namespace Rnwood.SmtpServer.Tests
         [Fact]
         public async void Start_CanConnect()
         {
-            using (Server server = StartServer())
+            using (var server = StartServer())
             {
-                using (TcpClient client = new TcpClient())
+                using (var client = new TcpClient())
                 {
                     await client.ConnectAsync("localhost", server.PortNumber);
                 }

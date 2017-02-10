@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Rnwood.Smtp4dev.API.DTO
+﻿namespace Rnwood.Smtp4dev.API.DTO
 {
     public class Server
     {
-        public int id { get; set; }
+        public int Id { get; set; }
 
-        public bool isRunning { get; internal set; }
+        public bool IsRunning { get; internal set; }
 
-        public bool isEnabled { get; set; }
+        public bool IsEnabled { get; set; }
 
-        public string error { get; set; }
-        public int port { get; set; }
+        public string Error { get; set; }
+        public int Port { get; set; }
     }
 }

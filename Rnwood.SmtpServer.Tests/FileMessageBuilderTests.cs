@@ -1,5 +1,4 @@
-﻿using Xunit;
-using System.IO;
+﻿using System.IO;
 
 namespace Rnwood.SmtpServer.Tests
 {
@@ -8,9 +7,9 @@ namespace Rnwood.SmtpServer.Tests
     {
         protected override IMessageBuilder GetInstance()
         {
-            FileInfo tempFile = new FileInfo(Path.GetTempFileName());
+            var tempFile = new FileInfo(Path.GetTempFileName());
 
-            Mocks mocks = new Mocks();
+            var mocks = new Mocks();
             return new FileMessage.Builder(tempFile, false);
         }
     }

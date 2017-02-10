@@ -32,9 +32,9 @@ namespace Rnwood.SmtpServer
 
         public Task ProcessAsync(IConnection connection, ParameterParser parameters, bool throwOnUnknownParameter)
         {
-            foreach (Parameter parameter in parameters.Parameters)
+            foreach (var parameter in parameters.Parameters)
             {
-                IParameterProcessor parameterProcessor = GetProcessor(parameter.Name);
+                var parameterProcessor = GetProcessor(parameter.Name);
 
                 if (parameterProcessor != null)
                 {

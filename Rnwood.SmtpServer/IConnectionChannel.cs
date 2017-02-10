@@ -15,7 +15,7 @@ namespace Rnwood.SmtpServer
 
         TimeSpan SendTimeout { get; set; }
 
-        IPAddress ClientIPAddress { get; }
+        IPAddress ClientIpAddress { get; }
 
         Task FlushAsync();
 

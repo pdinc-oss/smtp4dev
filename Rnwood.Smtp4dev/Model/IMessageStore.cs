@@ -1,22 +1,21 @@
-﻿using Rnwood.SmtpServer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Rnwood.Smtp4dev.Model
 {
     public interface IMessageStore
     {
-        IEnumerable<ISmtp4devMessage> Messages { get; }
+        IEnumerable<ISmtp4DevMessage> Messages { get; }
 
-        event EventHandler<Smtp4devMessageEventArgs> MessageAdded;
+        event EventHandler<Smtp4DevMessageEventArgs> MessageAdded;
 
-        event EventHandler<Smtp4devMessageEventArgs> MessageDeleted;
+        event EventHandler<Smtp4DevMessageEventArgs> MessageDeleted;
 
-        void AddMessage(ISmtp4devMessage message);
+        void AddMessage(ISmtp4DevMessage message);
 
-        void DeleteMessage(ISmtp4devMessage message);
+        void DeleteMessage(ISmtp4DevMessage message);
 
-        IEnumerable<ISmtp4devMessage> SearchMessages(string searchTerm);
+        IEnumerable<ISmtp4DevMessage> SearchMessages(string searchTerm);
 
         void DeleteAllMessages();
     }
